@@ -1,0 +1,18 @@
+# chezmoi configuration template
+# This file is executed as a template, so you can use chezmoi's template functions
+
+[git]
+    autoCommit = true
+    autoPush = false
+
+[diff]
+    exclude = ["scripts", "LICENSE", "README.md"]
+
+[edit]
+    command = "nvim"
+
+[data]
+    name = "Emilio Castro"
+    email = "emilio@emiliocastro.com.mx"
+    github = "ScrambledBits"
+    timezone = "America/Mexico_City"

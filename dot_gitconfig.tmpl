@@ -1,0 +1,81 @@
+# Emilio Castro's git configuration
+# Managed by chezmoi
+
+[user]
+    name = {{ .name }}
+    email = {{ .email }}
+    
+[github]
+    user = {{ .github }}
+
+[core]
+    editor = nvim
+    pager = delta
+    autocrlf = input
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[merge]
+    tool = nvimdiff
+    conflictstyle = diff3
+
+[diff]
+    tool = nvimdiff
+    colorMoved = default
+
+[delta]
+    navigate = true
+    light = false
+    side-by-side = true
+    line-numbers = true
+
+[interactive]
+    diffFilter = delta --color-only
+
+[alias]
+    # Short aliases
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    df = diff
+    dc = diff --cached
+    lg = log --oneline --graph --decorate --all
+    last = log -1 HEAD
+    
+    # Teaching helpers
+    undo = reset --soft HEAD~1
+    amend = commit --amend --no-edit
+    unstage = reset HEAD --
+    discard = checkout --
+    
+    # Branch management
+    bd = branch -d
+    bD = branch -D
+    
+    # Review helpers
+    review = log --oneline --reverse origin/main..HEAD
+    files = diff --name-only origin/main...HEAD
+
+[color]
+    ui = auto
+
+[credential]
+    helper = osxkeychain
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true

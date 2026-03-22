@@ -1,0 +1,103 @@
+# Emilio Castro's zsh configuration
+# Managed by chezmoi: https://www.chezmoi.io/
+# Source: {{ .chezmoi.sourceDir }}
+
+# === Oh My Zsh ===
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+plugins=(git)
+source $ZSH/oh-my-zsh.sh
+
+# === mise (version manager) ===
+# Replaces pyenv, nvm, rbenv, tfenv with one tool
+eval "$(mise activate zsh)"
+
+# === direnv (per-directory env vars) ===
+eval "$(direnv hook zsh)"
+
+# === zoxide (smart cd) ===
+eval "$(zoxide init zsh)"
+
+# === Starship prompt ===
+eval "$(starship init zsh)"
+
+# === kube-ps1 (k8s context in prompt) ===
+# Uncomment to enable k8s context in prompt
+# source "$(brew --prefix)/opt/kube-ps1/share/kube-ps1.sh"
+# PROMPT='$(kube_ps1)'$PROMPT
+
+# === GCP SDK ===
+if [ -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]; then
+    source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+    source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+fi
+
+# === Aliases ===
+# Navigation
+alias cd='z'                    # zoxide
+alias ls='eza --icons --group-directories-first'
+alias ll='eza -la --icons --group-directories-first'
+alias lt='eza --tree --icons --group-directories-first'
+alias l='ls -la'
+
+# Git
+alias g='git'
+alias gs='git status'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gcm='git commit -m'
+alias gcam='git commit -am'
+alias gp='git push'
+alias gpl='git pull'
+alias gl='git log --oneline --graph --decorate'
+
+# Terraform
+alias tf='terraform'
+alias tfv='terraform validate'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+alias tfaa='terraform apply -auto-approve'
+alias tfws='terraform workspace'
+alias tfss='terraform state show'
+
+# Kubernetes
+alias k='kubectl'
+alias kctx='kubectx'
+alias kns='kubens'
+alias kg='kubectl get'
+alias kd='kubectl describe'
+alias kl='kubectl logs'
+alias klf='kubectl logs -f'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get svc'
+alias kgn='kubectl get nodes'
+alias kaf='kubectl apply -f'
+alias kdf='kubectl delete -f'
+
+# Teaching/Recording
+alias rec='asciinema rec'           # Start recording
+alias vhs-rec='vhs record'          # Record terminal GIF
+
+# === Environment Variables ===
+export EDITOR='nvim'
+export VISUAL='nvim'
+export PAGER='bat'
+export AWS_PAGER=''  # Disable AWS CLI pager
+
+# === PATH additions ===
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
+
+# === FZF configuration ===
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# === Teaching shortcuts ===
+alias teaching='cd ~/Projects/teaching'
+alias projects='cd ~/Projects'
+
+# === Local overrides (not in git) ===
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local

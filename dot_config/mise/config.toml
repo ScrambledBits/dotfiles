@@ -1,0 +1,37 @@
+# mise configuration - version manager for multiple tools
+# https://mise.jdx.dev/
+# Usage: mise install (installs all tools listed here)
+
+[tools]
+# Python for teaching and automation
+python = "3.12"
+poetry = "1.7"
+ruff = "0.4"
+
+# Node.js for slidev and modern tools
+node = "20"
+
+# Go for cloud-native tools
+go = "1.22"
+
+# Terraform ecosystem
+terraform = "1.7"
+terragrunt = "0.55"
+tflint = "0.50"
+
+# Cloud CLIs
+"pipx:awscli" = "latest"
+
+[settings]
+# Automatically install missing tools when entering directories
+experimental = true
+
+[env]
+# Global environment variables
+PYTHONDONTWRITEBYTECODE = "1"
+PIP_REQUIRE_VIRTUALENV = "true"
+
+[alias]
+# Short names for common tools
+tf = "terraform"
+tg = "terragrunt"
