@@ -6,7 +6,7 @@
 # Python for teaching and automation
 python = "3.12"
 poetry = "1.7"
-ruff = "0.4"
+ruff = "0.4.10"      # Fixed: specific patch version
 
 # Node.js for slidev and modern tools
 node = "20"
@@ -15,9 +15,9 @@ node = "20"
 go = "1.22"
 
 # Terraform ecosystem
-terraform = "1.7"
-terragrunt = "0.55"
-tflint = "0.50"
+terraform = "1.14.7"  # Latest stable
+terragrunt = "0.55.21" # Fixed: specific patch version
+tflint = "0.50.3"
 
 # Cloud CLIs
 "pipx:awscli" = "latest"
@@ -31,7 +31,7 @@ experimental = true
 PYTHONDONTWRITEBYTECODE = "1"
 PIP_REQUIRE_VIRTUALENV = "true"
 
-[alias]
+[tool_alias]
 # Short names for common tools
 tf = "terraform"
 tg = "terragrunt"
