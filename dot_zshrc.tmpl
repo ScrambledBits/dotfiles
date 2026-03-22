@@ -2,22 +2,11 @@
 # Managed by chezmoi: https://www.chezmoi.io/
 # Source: {{ .chezmoi.sourceDir }}
 
-# === History ===
-HISTSIZE=50000
-SAVEHIST=50000
-
 # === Oh My Zsh ===
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
-
-# === Shell enhancements (install via brew) ===
-# brew install zsh-autosuggestions zsh-fast-syntax-highlighting
-[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
-    source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-[ -f "$(brew --prefix)/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ] && \
-    source "$(brew --prefix)/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 
 # === mise (version manager) ===
 # Replaces pyenv, nvm, rbenv, tfenv with one tool
@@ -32,21 +21,20 @@ eval "$(zoxide init zsh)"
 # === Starship prompt ===
 eval "$(starship init zsh)"
 
+# === kube-ps1 (k8s context in prompt) ===
+# Uncomment to enable k8s context in prompt
+# source "$(brew --prefix)/opt/kube-ps1/share/kube-ps1.sh"
+# PROMPT='$(kube_ps1)'$PROMPT
+
 # === GCP SDK ===
 if [ -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]; then
     source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
     source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
 fi
 
-# === kubectl completion ===
-if command -v kubectl &>/dev/null; then
-    source <(kubectl completion zsh)
-fi
-
 # === Aliases ===
 # Navigation
-# NOTE: `z` doesn't handle all cd edge cases (cd -, cd ~) but works for 99% of usage
-alias cd='z'
+alias cd='z'                    # zoxide
 alias ls='eza --icons --group-directories-first'
 alias ll='eza -la --icons --group-directories-first'
 alias lt='eza --tree --icons --group-directories-first'

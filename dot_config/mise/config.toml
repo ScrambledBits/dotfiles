@@ -5,8 +5,7 @@
 [tools]
 # Python for teaching and automation
 python = "3.13"
-poetry = "2.3"
-ruff = "0.15"
+uv = "latest"   # Replaces poetry + ruff + pip (fast, unified Python toolchain)
 
 # Node.js for slidev and modern tools
 # NOTE: Node 20 reaches end-of-maintenance April 2026 — pinned to 24 (Active LTS)
@@ -29,6 +28,11 @@ tflint = "0.61"
 # Developer tools
 fd = "latest"
 lazygit = "latest"
+delta = "latest"   # Better git diffs (pager)
+
+[settings]
+# Automatically install missing tools when entering directories
+experimental = true
 
 [env]
 # Global environment variables
