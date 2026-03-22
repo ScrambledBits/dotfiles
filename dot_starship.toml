@@ -1,6 +1,11 @@
 # Starship prompt configuration
 # https://starship.rs/config/
 
+# Global performance settings
+scan_timeout = 30           # ms to scan for files; reduce if prompt feels slow
+command_timeout = 500       # ms before a module is skipped; prevents slow prompts
+add_newline = true
+
 # Format displays username, directory, git, kubernetes, gcloud, terraform
 format = """
 $username$hostname$directory$git_branch$git_status$kubernetes$gcloud$terraform$cmd_duration
@@ -51,6 +56,9 @@ symbol = "☸ "
 format = '[$symbol$context( \($namespace\))]($style) in '
 style = "bold cyan"
 disabled = false
+# Only show k8s context when inside a project with k8s files
+detect_files = ["k8s", "helm", ".kube", "Chart.yaml", "values.yaml", "kustomization.yaml"]
+detect_folders = [".kube", "k8s", "helm", "manifests"]
 
 [gcloud]
 symbol = "☁️ "

@@ -10,3 +10,12 @@
     email = "emilio@emiliocastro.com.mx"
     github = "ScrambledBits"
     timezone = "America/Mexico_City"
+    # Optional: SSH public key path for git commit signing (Ed25519 recommended).
+    # Set to your key path, e.g. "key::ssh-ed25519 AAAA... user@host"
+    # Leave empty to skip commit signing configuration.
+    gitSigningKey = ""
+
+# Machine-specific overrides: create ~/.chezmoidata/local.toml (not tracked in git)
+# to override any [data] values for this machine. Example:
+#   [data]
+#   gitSigningKey = "key::ssh-ed25519 AAAA..."

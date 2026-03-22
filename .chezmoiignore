@@ -1,0 +1,9 @@
+# Files to exclude from chezmoi management
+# https://www.chezmoi.io/reference/special-files/chezmoiignore/
+
+# Machine-local secret overrides (create manually, never commit)
+.chezmoidata/local.toml
+.chezmoidata/secrets.yml
+
+# Local shell overrides
+.zshrc.local

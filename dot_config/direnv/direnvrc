@@ -1,25 +1,23 @@
 # direnv configuration
 # https://direnv.net/
-
-# Load mise when entering directories
-use_mise() {
-    eval "$(mise hook-env)"
-}
+#
+# NOTE: use_mise() has been removed — mise tool loading is handled automatically
+# by `eval "$(mise activate zsh)"` in .zshrc. No .envrc action needed for this.
 
 # AWS profile switching
+# Usage in .envrc: use_aws_profile my-profile
 use_aws_profile() {
     export AWS_PROFILE="$1"
 }
 
 # GCP project switching
+# Usage in .envrc: use_gcp_project my-gcp-project
 use_gcp_project() {
     export CLOUDSDK_CORE_PROJECT="$1"
 }
 
 # Terraform workspace switching
+# Usage in .envrc: use_tf_workspace staging
 use_tf_workspace() {
     export TF_WORKSPACE="$1"
 }
-
-# Show a warning if .envrc is not yet allowed
-log_status "direnv loaded. Run 'direnv allow' to activate per-project environments."

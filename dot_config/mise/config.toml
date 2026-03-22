@@ -4,27 +4,31 @@
 
 [tools]
 # Python for teaching and automation
-python = "3.12"
-poetry = "1.7"
-ruff = "0.4.10"      # Fixed: specific patch version
+python = "3.13"
+poetry = "2.3"
+ruff = "0.15"
 
 # Node.js for slidev and modern tools
-node = "20"
+# NOTE: Node 20 reaches end-of-maintenance April 2026 — pinned to 24 (Active LTS)
+node = "24"
 
 # Go for cloud-native tools
-go = "1.22"
+go = "1.26"
 
 # Terraform ecosystem
-terraform = "1.14.7"  # Latest stable
-terragrunt = "0.55.21" # Fixed: specific patch version
-tflint = "0.50.3"
+# NOTE: HashiCorp changed Terraform to BSL license in 2023.
+# OpenTofu (MPL 2.0, Linux Foundation) is a compatible alternative:
+#   opentofu = "1.9"   # uncomment to switch
+terraform = "1.14.7"
+terragrunt = "0.99"
+tflint = "0.61"
 
 # Cloud CLIs
-"pipx:awscli" = "latest"
+"pipx:awscli" = "latest"   # AWS CLI; pinning to latest acceptable for CLI tools
 
-[settings]
-# Automatically install missing tools when entering directories
-experimental = true
+# Developer tools
+fd = "latest"
+lazygit = "latest"
 
 [env]
 # Global environment variables
