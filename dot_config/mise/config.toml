@@ -33,6 +33,11 @@ fd = "latest"
 lazygit = "latest"
 delta = "latest"   # Better git diffs (pager)
 
+# SSH & Remote tools
+cloudflared = "latest"   # Cloudflare Access tunnel
+mosh = "latest"          # Mobile SSH (requires brew install mosh)
+tmux = "latest"          # Terminal multiplexer (already installed via brew)
+
 [settings]
 # Automatically install missing tools when entering directories
 experimental = true
