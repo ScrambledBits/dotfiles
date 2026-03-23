@@ -91,11 +91,10 @@ eval "$(mise activate zsh)"
 # direnv (per-directory environment variables)
 eval "$(direnv hook zsh)"
 
-# Note: NVM not installed — using mise for Node.js if needed
-# Note: Rust/Cargo not installed — uncomment if you install Rust
-# if [[ -f "$HOME/.cargo/env" ]]; then
-#     source "$HOME/.cargo/env"
-# fi
+# Rust/Cargo environment (installed via mise)
+if [[ -f "$HOME/.cargo/env" ]]; then
+    source "$HOME/.cargo/env"
+fi
 
 # =============================================================================
 # 6. Shell Enhancements

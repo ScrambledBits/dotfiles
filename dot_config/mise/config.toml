@@ -14,6 +14,9 @@ node = "24"
 # Go for cloud-native tools
 go = "1.26"
 
+# Rust (Cargo) for systems programming and tooling
+rust = "1.85"
+
 # Terraform ecosystem
 # NOTE: HashiCorp changed Terraform to BSL license in 2023.
 # OpenTofu (MPL 2.0, Linux Foundation) is a compatible alternative:

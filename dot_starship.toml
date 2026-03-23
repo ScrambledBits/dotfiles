@@ -1,93 +1,194 @@
-# Starship prompt configuration
+# Starship Prompt Configuration
 # https://starship.rs/config/
+# Optimized for Emilio's DevOps/Teaching workflow
 
-# Global performance settings
-scan_timeout = 30           # ms to scan for files; reduce if prompt feels slow
-command_timeout = 500       # ms before a module is skipped; prevents slow prompts
-add_newline = true
+# Performance & Layout
+add_newline = true          # Blank line between prompts
+command_timeout = 1000      # ms before module skip (higher for slow commands)
+scan_timeout = 30           # ms to scan for files
 
-# Format displays username, directory, git, kubernetes, gcloud, terraform
-format = """
-$username$hostname$directory$git_branch$git_status$kubernetes$gcloud$terraform$cmd_duration
-$character"""
+# Custom prompt format with box-drawing characters
+format = """\
+[╭╴](238)$env_var\
+$all[╰─](238)$character"""
 
+# =============================================================================
+# Core Identity
+# =============================================================================
 [character]
-success_symbol = "[➜](bold green)"
-error_symbol = "[✗](bold red)"
+success_symbol = "[](238)"  # Same icon for success/error (clean look)
+error_symbol = "[](238)"
+vicmd_symbol = "[N](bold green)"  # Show when in vim normal mode
+
+[env_var.STARSHIP_DISTRO]
+format = '[$env_value](bold white) '
+variable = "STARSHIP_DISTRO"
+disabled = false
 
 [username]
-style_user = "bold blue"
-style_root = "bold red"
+style_user = "white bold"
+style_root = "black bold"
 format = "[$user]($style) "
 disabled = false
-show_always = false
+show_always = true          # Always show username (teaching demos)
 
-[hostname]
-ssh_only = true
-format = "at [$hostname](bold yellow) "
-
+# =============================================================================
+# Filesystem & Version Control
+# =============================================================================
 [directory]
 truncation_length = 3
 truncation_symbol = "…/"
-format = "in [$path]($style) [$read_only]($read_only_style) "
-style = "bold cyan"
+home_symbol = " ~"
+read_only_style = "197"
+read_only = "  "
+format = "at [$path]($style)[$read_only]($read_only_style) "
+
+[directory.substitutions]
+"~/Projects" = " Projects"
+"~/Projects/teaching" = " Teaching"
+"~/Projects/dotfiles" = " Dotfiles"
 
 [git_branch]
-symbol = ""
+symbol = " "
 format = "on [$symbol$branch]($style) "
-style = "bold purple"
+truncation_length = 10
+truncation_symbol = "…/"
+style = "bold green"
 
 [git_status]
-format = '([$all_status$ahead_behind]($style) )'
+format = '[\($all_status$ahead_behind\)]($style) '
+style = "bold green"
+conflicted = "🏳"
+up_to_date = " "
+untracked = " "
+ahead = "⇡${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+behind = "⇣${count}"
+stashed = " "
+modified = " "
+staged = '[++\($count\)](green)'
+renamed = "襁 "
+deleted = " "
+
+# =============================================================================
+# Cloud & Infrastructure (Primary Workflow)
+# =============================================================================
+[terraform]
+format = "via [ terraform $version]($style) "
 style = "bold purple"
-conflicted = "⚔️ "
-ahead = "🏎️ ×${count} "
-behind = "🐢 ×${count} "
-diverged = "🔱 🏎️ ×${ahead_count} 🐢 ×${behind_count} "
-untracked = "🛤️ ×${count} "
-stashed = "📦 "
-modified = "📝 ×${count} "
-staged = "🗃️ ×${count} "
-renamed = "📛 ×${count} "
-deleted = "🗑️ ×${count} "
+detect_extensions = ["tf", "tfvars", "hcl"]
 
 [kubernetes]
-symbol = "☸ "
-format = '[$symbol$context( \($namespace\))]($style) in '
-style = "bold cyan"
+format = 'on [ $context\($namespace\)](bold purple) '
 disabled = false
-# Only show k8s context when inside a project with k8s files
-detect_files = ["k8s", "helm", ".kube", "Chart.yaml", "values.yaml", "kustomization.yaml"]
-detect_folders = [".kube", "k8s", "helm", "manifests"]
+detect_extensions = []
+detect_files = ["deployment.yaml", "docker-compose.yml"]
+detect_folders = ["manifests", "charts"]
+
+[kubernetes.context_aliases]
+'gke_*' = 'GKE'
+'arn:aws:eks:*' = 'EKS'
+'default' = '⎈'
 
 [gcloud]
-symbol = "☁️ "
-format = '[$symbol$project]($style) '
+format = 'on [☁️  $account(\($project\))]($style) '
 style = "bold blue"
-disabled = false
+detect_extensions = []
+detect_files = ["credentials", "gcloud"]
+detect_folders = ["gcloud"]
 
-[terraform]
-symbol = "💠 "
-format = '[$symbol$workspace]($style) '
-style = "bold 105"
-disabled = false
+[aws]
+format = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
+style = 'bold 214'
+symbol = ' '
+detect_extensions = []
+detect_files = ["credentials", "config"]
+detect_folders = ["aws"]
 
-[cmd_duration]
-min_time = 2000
-format = "took [$duration]($style) "
+[docker_context]
+format = "via [ $context](bold blue) "
+detect_extensions = []
+detect_files = ["docker-compose.yml", "Dockerfile"]
+detect_folders = ["docker"]
+
+# =============================================================================
+# Languages & Tooling (Teaching Stack)
+# =============================================================================
+[python]
+symbol = " "
+python_binary = "python3"
+format = 'via [${symbol}${pyenv_prefix}${version}(\($virtualenv\))]($style) '
 style = "bold yellow"
+detect_extensions = ["py", "pyc", "pyo", "pyw", "Pipfile", "uv.lock"]
+detect_files = ["requirements.txt", "pyproject.toml", "Pipfile"]
+detect_folders = ["__pycache__", ".venv", "venv"]
 
-[time]
-disabled = true
+[uv]
+symbol = " "
+format = 'via [${symbol}${version}]($style) '
+style = "bold yellow"
+detect_extensions = ["py", "pyc"]
+detect_files = ["uv.lock", "pyproject.toml"]
 
-# Show battery status when low
-[battery]
-full_symbol = "🔋"
-charging_symbol = "⚡️"
-discharging_symbol = "💀"
-display = ["docked", "discharging"]
-threshold = 20
+[nodejs]
+format = "via [ $version](bold green) "
+disabled = true  # Using mise, not project-specific
 
-[[battery.display]]
-threshold = 20
-style = "bold red"
+[ruby]
+format = "via [ $version]($style) "
+disabled = true  # Not in your stack
+
+[rust]
+symbol = " "
+format = 'via [${symbol}${version}]($style) '
+style = "bold orange"
+detect_extensions = ["rs", "ron"]
+detect_files = ["Cargo.toml", "Cargo.lock"]
+detect_folders = ["rust"]
+
+[go]
+symbol = " "
+format = 'via [${symbol}${version}]($style) '
+style = "bold cyan"
+detect_extensions = ["go", "mod", "sum"]
+detect_files = ["go.mod", "go.sum", "Gopkg.toml"]
+detect_folders = ["go"]
+
+# =============================================================================
+# Package Managers & DevOps Tools
+# =============================================================================
+[helm]
+format = "via [ $version](bold purple) "
+style = "bold purple"
+
+[vagrant]
+format = "via [ vagrant $version]($style) "
+disabled = true  # Not in your primary stack
+
+[ansible]
+format = "via [ $version](bold yellow) "
+style = "bold yellow"
+detect_extensions = ["yml", "yaml"]
+detect_files = ["ansible.cfg", "inventory"]
+detect_folders = ["ansible"]
+
+[mise]
+symbol = " "
+format = 'via [${symbol}${version}]($style) '
+style = "bold blue"
+
+# =============================================================================
+# UX Enhancements
+# =============================================================================
+[cmd_duration]
+min_duration = 500          # Show duration if command took >500ms
+format = 'took [$duration]($style) '
+style = "dimmed italic"
+
+[line_break]
+disabled = false            # Separate prompt from command output
+
+[palettes]
+# Custom color palettes for light/dark modes
+dark = ["#ff0000", "#00ff00", "#0000ff"]
+light = ["#ff0000", "#00ff00", "#0000ff"]
