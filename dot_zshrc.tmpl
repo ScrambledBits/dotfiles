@@ -1,48 +1,149 @@
-# Emilio Castro's zsh configuration
+# Emilio Castro's ZSH Configuration
 # Managed by chezmoi: https://www.chezmoi.io/
 # Source: {{ .chezmoi.sourceDir }}
 
-# === Oh My Zsh ===
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
-plugins=(git)
-source $ZSH/oh-my-zsh.sh
-
-# === mise (version manager) ===
-# Replaces pyenv, nvm, rbenv, tfenv with one tool
-eval "$(mise activate zsh)"
-
-# === direnv (per-directory env vars) ===
-eval "$(direnv hook zsh)"
-
-# === zoxide (smart cd) ===
-eval "$(zoxide init zsh)"
-
-# === Starship prompt ===
-eval "$(starship init zsh)"
-
-# === kube-ps1 (k8s context in prompt) ===
-# Uncomment to enable k8s context in prompt
-# source "$(brew --prefix)/opt/kube-ps1/share/kube-ps1.sh"
-# PROMPT='$(kube_ps1)'$PROMPT
-
-# === GCP SDK ===
-if [ -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]; then
-    source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
-    source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+# =============================================================================
+# 1. Environment & Paths (External Files)
+# =============================================================================
+# Create these manually: ~/.config/shell/.env, api_keys.env, paths
+if [[ -f "$HOME/.config/shell/.env" ]]; then
+    source "$HOME/.config/shell/.env"
 fi
 
-# === Aliases ===
-# Navigation
-alias cd='z'                    # zoxide
-alias ls='eza --icons --group-directories-first'
-alias ll='eza -la --icons --group-directories-first'
-alias lt='eza --tree --icons --group-directories-first'
-alias l='ls -la'
+if [[ -f "$HOME/.config/shell/api_keys.env" ]]; then
+    source "$HOME/.config/shell/api_keys.env"
+fi
+
+if [[ -f "$HOME/.config/shell/paths" ]]; then
+    source "$HOME/.config/shell/paths"
+fi
+
+# =============================================================================
+# 2. Completion Caching (Performance)
+# =============================================================================
+COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump-${ZSH_VERSION}"
+mkdir -p "${COMPDUMP:h}"
+autoload -Uz compinit
+
+# Refresh cache only if missing or older than 24h
+if [[ ! -f $COMPDUMP || $(( $(date +%s) - $(stat -f %m "$COMPDUMP" 2>/dev/null || echo 0) )) -gt 86400 ]]; then
+    compinit -i -d "$COMPDUMP"
+else
+    compinit -C -d "$COMPDUMP"
+fi
+
+# =============================================================================
+# 3. Oh My Zsh Configuration
+# =============================================================================
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME=""  # Disabled — using Starship instead
+
+setopt hist_ignore_all_dups inc_append_history
+ENABLE_CORRECTION="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+HIST_STAMPS="dd/mm/yyyy"
+
+# Auto-update settings
+zstyle ':omz:update' mode reminder
+zstyle ':omz:update' frequency 13
+zstyle ':completion:::::' completer _complete _approximate
+zstyle ':completion:*:approximate:*' max-errors 2
+
+# Plugins (tailored to your actual workflow)
+plugins=(
+    aliases
+    alias-finder
+    git
+    macos
+    man
+    brew
+    fzf
+    colored-man-pages
+    docker
+    docker-compose
+    emoji
+    git-extras
+    gitignore
+    globalias
+    history
+    kubectl
+    pip
+    python
+    terraform
+    ansible
+    mise  # Added: version manager integration
+)
+
+# Load OMZ
+source "$ZSH/oh-my-zsh.sh"
+
+# =============================================================================
+# 4. Prompt (Starship)
+# =============================================================================
+eval "$(starship init zsh)"
+
+# =============================================================================
+# 5. Version Managers & Language Environments
+# =============================================================================
+# mise (primary version manager — replaces nvm, pyenv, rbenv)
+eval "$(mise activate zsh)"
+
+# direnv (per-directory environment variables)
+eval "$(direnv hook zsh)"
+
+# Note: NVM not installed — using mise for Node.js if needed
+# Note: Rust/Cargo not installed — uncomment if you install Rust
+# if [[ -f "$HOME/.cargo/env" ]]; then
+#     source "$HOME/.cargo/env"
+# fi
+
+# =============================================================================
+# 6. Shell Enhancements
+# =============================================================================
+# zoxide (smart cd — already in your setup)
+eval "$(zoxide init zsh)"
+
+# FZF configuration (already in your setup)
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# =============================================================================
+# 7. Aliases & Shortcuts
+# =============================================================================
+
+# Editor
+alias vim='nvim'
+alias v='nvim'
+
+# Modern Core Utils (Bat/Eza — already in your setup)
 alias cat='bat'
 alias find='fd'
+alias ls='eza --icons --group-directories-first'
+alias ll='eza -la --icons --group-directives-first'
+alias lt='eza --tree --icons --group-directories-first'
+alias l='ls -la'
 
-# Git
+# Kubernetes (k9s, stern, kubectx already installed)
+alias k='kubectl'
+alias kx='kubectx'
+alias kn='kubens'
+alias ksys='k -n kube-system'
+alias kg='kubectl get'
+alias kd='kubectl describe'
+alias kl='kubectl logs'
+alias klf='kubectl logs -f'
+
+# Terraform (already in your setup)
+alias tf='terraform'
+alias tfv='terraform validate'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+alias tfaa='terraform apply -auto-approve'
+alias tfws='terraform workspace'
+alias tfss='terraform state show'
+
+# Git (extended aliases from your setup)
 alias g='git'
 alias gs='git status'
 alias gd='git diff'
@@ -58,51 +159,49 @@ alias gl='git log --oneline --graph --decorate'
 alias gst='git stash'
 alias gsp='git stash pop'
 
-# Terraform
-alias tf='terraform'
-alias tfv='terraform validate'
-alias tfp='terraform plan'
-alias tfa='terraform apply'
-alias tfaa='terraform apply -auto-approve'
-alias tfws='terraform workspace'
-alias tfss='terraform state show'
+# Docker (OrbStack handles context)
+alias d='docker'
+alias dc='docker-compose'
 
-# Kubernetes
-alias k='kubectl'
-alias kctx='kubectx'
-alias kns='kubens'
-alias kg='kubectl get'
-alias kd='kubectl describe'
-alias kl='kubectl logs'
-alias klf='kubectl logs -f'
-alias kgp='kubectl get pods'
-alias kgs='kubectl get svc'
-alias kgn='kubectl get nodes'
-alias kaf='kubectl apply -f'
-alias kdf='kubectl delete -f'
-
-# Teaching/Recording
-alias rec='asciinema rec'           # Start recording
-alias vhs-rec='vhs record'          # Record terminal GIF
-
-# === Environment Variables ===
-export EDITOR='nvim'
-export VISUAL='nvim'
-export PAGER='bat'
-export AWS_PAGER=''  # Disable AWS CLI pager
-
-# === PATH additions ===
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/go/bin:$PATH"
-
-# === FZF configuration ===
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-# === Teaching shortcuts ===
+# Teaching/Recording (your workflow)
+alias rec='asciinema rec'
+alias vhs-rec='vhs record'
 alias teaching='cd ~/Projects/teaching'
 alias projects='cd ~/Projects'
 
-# === Local overrides (not in git) ===
+# Networking
+alias myip='curl ifconfig.me'
+alias ports='lsof -i -P -n | grep LISTEN'
+
+# Python (via uv/mise)
+alias py='python3'
+alias uv='uv'
+
+# GCP (gcloud already sourced below)
+
+# =============================================================================
+# 8. GCP SDK
+# =============================================================================
+if [ -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]; then
+    source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+    source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+fi
+
+# =============================================================================
+# 9. Git Extras Completion
+# =============================================================================
+if [[ -f /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh ]]; then
+    source /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh
+fi
+
+# =============================================================================
+# 10. OpenClaw Completion
+# =============================================================================
+if [ -f "/Users/emilio/.openclaw/completions/openclaw.zsh" ]; then
+    source "/Users/emilio/.openclaw/completions/openclaw.zsh"
+fi
+
+# =============================================================================
+# 11. Local Overrides (Not in Git)
+# =============================================================================
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
