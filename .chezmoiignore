@@ -7,3 +7,23 @@
 
 # Local shell overrides
 .zshrc.local
+
+# Claude runtime files (keep settings.json only)
+.claude/backups
+.claude/cache
+.claude/downloads
+.claude/file-history
+.claude/ide
+.claude/mcp-needs-auth-cache.json
+.claude/policy-limits.json
+.claude/plugins
+.claude/projects
+.claude/remote-settings.json
+.claude/session-env
+.claude/sessions
+.claude/shell-snapshots
+.claude/history.jsonl
+
+# VS Code runtime files (keep argv.json only)
+.vscode/extensions
+.vscode/cli
