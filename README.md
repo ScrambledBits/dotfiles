@@ -1,35 +1,42 @@
-# Emilio Castro's Dotfiles
+# Dotfiles de Emilio Castro
 
-Senior Cloud & DevOps Engineer configuration managed by [chezmoi](https://www.chezmoi.io/).
+Configuración de Senior Cloud & DevOps Engineer gestionada por [chezmoi](https://www.chezmoi.io/).
 
-## Quick Start
+## Inicio Rápido
 
 ```bash
-# Install chezmoi
+# Instalar chezmoi
 brew install chezmoi
 
-# Initialize from this repo
+# Inicializar desde este repositorio
 chezmoi init --apply git@github.com:ScrambledBits/dotfiles.git
 
-# Install all managed tool versions
+# Durante la inicialización, se te preguntará por:
+# - Nombre completo
+# - Correo electrónico
+# - Usuario de GitHub
+# - Zona horaria (ej. America/Mexico_City)
+# ¡Esto mantiene tu información personal fuera del repositorio!
+
+# Instalar todas las versiones de herramientas gestionadas
 mise install
 
-# Or apply changes after editing
+# O aplicar cambios después de editar
 chezmoi apply
 ```
 
-## What's Included
+## Qué Incluye
 
-- **Shell:** zsh with Oh My Zsh, Starship prompt, mise, direnv, zsh-autosuggestions, fast-syntax-highlighting
-- **Cloud:** GCP, AWS, Azure tooling with context-aware prompts
-- **Kubernetes:** k9s, kubectx, stern integration
-- **IaC:** Terraform 1.14 (or OpenTofu as alternative), Terragrunt, TFLint, Checkov, Trivy
-- **Development:** Neovim, delta (git diffs), lazygit, fd, bat, eza, ripgrep, fzf, zoxide
-- **Teaching:** asciinema, vhs, slides, d2 (diagrams)
+- **Shell:** zsh con Oh My Zsh, prompt de Starship, mise, direnv, zsh-autosuggestions, fast-syntax-highlighting
+- **Cloud:** Herramientas para GCP, AWS, Azure con prompts conscientes del contexto
+- **Kubernetes:** k9s, kubectx, integración con stern
+- **IaC:** Terraform 1.14 (u OpenTofu como alternativa), Terragrunt, TFLint, Checkov, Trivy
+- **Desarrollo:** Neovim, delta (para diffs de git), lazygit, fd, bat, eza, ripgrep, fzf, zoxide
+- **Docencia:** asciinema, vhs, slides, d2 (diagramas)
 
-## Managed Tool Versions (mise)
+## Versiones de Herramientas Gestionadas (mise)
 
-| Tool | Version |
+| Herramienta | Versión |
 |------|---------|
 | Python | 3.13 |
 | Node.js | 24 (Active LTS) |
@@ -40,11 +47,11 @@ chezmoi apply
 | Poetry | 2.3 |
 | Ruff | 0.15 |
 
-> **Note:** Terraform uses HashiCorp's BSL license. [OpenTofu](https://opentofu.org/) (MPL 2.0) is a compatible alternative — see `dot_config/mise/config.toml` for the commented-out switch.
+> **Nota:** Terraform utiliza la licencia BSL de HashiCorp. [OpenTofu](https://opentofu.org/) (MPL 2.0) es una alternativa compatible — revisa `dot_config/mise/config.toml` para ver cómo alternar (comentado).
 
-## Key Aliases
+## Alias Principales
 
-| Alias | Command |
+| Alias | Comando |
 |-------|---------|
 | `tf` | terraform |
 | `k` | kubectl |
@@ -55,42 +62,43 @@ chezmoi apply
 | `teaching` | cd ~/Projects/teaching |
 | `rec` | asciinema rec |
 
-## Local Overrides
+## Sobrescrituras Locales
 
-Create `~/.zshrc.local` for machine-specific settings (not in git).
+Crea `~/.zshrc.local` para configuraciones específicas de la máquina (no versionadas en git).
 
-For machine-specific chezmoi data (e.g. SSH signing key), create `~/.chezmoidata/local.toml`:
+Para datos específicos de chezmoi (como un correo diferente para una computadora de trabajo, o una llave de firma SSH), crea `~/.chezmoidata/local.toml` ANTES o DESPUÉS de ejecutar `chezmoi init`:
 ```toml
-[data]
+email = "trabajo@empresa.com"
 gitSigningKey = "key::ssh-ed25519 AAAA..."
 ```
+Este archivo local tiene prioridad sobre la configuración global y nunca será rastreado por git.
 
-## Git Commit Signing (optional)
+## Firma de Commits de Git (opcional)
 
-To enable SSH-based commit signing (no GPG needed):
+Para habilitar la firma de commits basada en SSH (sin necesidad de GPG):
 
-1. Set `gitSigningKey` in `~/.chezmoidata/local.toml` with your Ed25519 public key
-2. Run `chezmoi apply` to regenerate `~/.gitconfig`
-3. Create `~/.ssh/allowed_signers`:
+1. Configura `gitSigningKey` en `~/.chezmoidata/local.toml` con tu llave pública Ed25519
+2. Ejecuta `chezmoi apply` para regenerar `~/.gitconfig`
+3. Crea `~/.ssh/allowed_signers`:
    ```
-   your@email.com ssh-ed25519 AAAA...
+   tu@correo.com ssh-ed25519 AAAA...
    ```
 
-## Teaching Workflow
+## Flujo de Trabajo de Docencia
 
 ```bash
-# Navigate to teaching materials
+# Navegar a los materiales de clase
 teaching
 
-# Start recording terminal session for students
+# Comenzar a grabar la sesión de terminal para los alumnos
 rec workshop-demo.cast
 
-# Convert to GIF for documentation
+# Convertir a GIF para la documentación
 agg workshop-demo.cast workshop-demo.gif
 ```
 
-## Credits
+## Créditos
 
-- [chezmoi](https://www.chezmoi.io/) for dotfile management
-- [mise](https://mise.jdx.dev/) for version management
-- [Starship](https://starship.rs/) for the prompt
+- [chezmoi](https://www.chezmoi.io/) para la gestión de dotfiles
+- [mise](https://mise.jdx.dev/) para la gestión de versiones
+- [Starship](https://starship.rs/) para el prompt

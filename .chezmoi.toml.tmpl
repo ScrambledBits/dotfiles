@@ -9,10 +9,10 @@
     command = "nvim"
 
 [data]
-    name = "Emilio Castro"
-    email = "emilio@emiliocastro.com.mx"
-    github = "ScrambledBits"
-    timezone = "America/Mexico_City"
+    name = {{ promptStringOnce . "name" "Full Name" | quote }}
+    email = {{ promptStringOnce . "email" "Email address" | quote }}
+    github = {{ promptStringOnce . "github" "GitHub username" | quote }}
+    timezone = {{ promptStringOnce . "timezone" "Timezone (e.g. America/Mexico_City)" | quote }}
     # Optional: SSH public key path for git commit signing (Ed25519 recommended).
     # Set to your key path, e.g. "key::ssh-ed25519 AAAA... user@host"
     # Leave empty to skip commit signing configuration.

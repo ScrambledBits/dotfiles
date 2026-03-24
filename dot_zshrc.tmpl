@@ -117,9 +117,12 @@ alias v='nvim'
 
 # Modern Core Utils (Bat/Eza — already in your setup)
 alias cat='bat'
+alias grep='batgrep --terminal-width=200 --no-snip'
+alias man='batman'
 alias find='fd'
 alias ls='eza --icons --group-directories-first'
-alias ll='eza -la --icons --group-directives-first'
+alias ll='eza -l --icons'
+alias la='eza -la --icons'
 alias lt='eza --tree --icons --group-directories-first'
 alias l='ls -la'
 
@@ -139,6 +142,7 @@ alias tfv='terraform validate'
 alias tfp='terraform plan'
 alias tfa='terraform apply'
 alias tfaa='terraform apply -auto-approve'
+alias tfd='terraform destroy'
 alias tfws='terraform workspace'
 alias tfss='terraform state show'
 
