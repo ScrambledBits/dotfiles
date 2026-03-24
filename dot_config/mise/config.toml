@@ -4,26 +4,26 @@
 
 [tools]
 # Python for teaching and automation
-python = "3.13"
+python = "latest"
 uv = "latest"   # Replaces poetry + ruff + pip (fast, unified Python toolchain)
 
 # Node.js for slidev and modern tools
 # NOTE: Node 20 reaches end-of-maintenance April 2026 — pinned to 24 (Active LTS)
-node = "24"
+node = "latest"
 
 # Go for cloud-native tools
-go = "1.26"
+go = "latest"
 
 # Rust (Cargo) for systems programming and tooling
-rust = "1.85"
+rust = "latest"
 
 # Terraform ecosystem
 # NOTE: HashiCorp changed Terraform to BSL license in 2023.
 # OpenTofu (MPL 2.0, Linux Foundation) is a compatible alternative:
 #   opentofu = "1.9"   # uncomment to switch
-terraform = "1.14.7"
-terragrunt = "0.99"
-tflint = "0.61"
+terraform = "latest"
+terragrunt = "latest"
+tflint = "latest"
 
 # Cloud CLIs
 "pipx:awscli" = "latest"   # AWS CLI; pinning to latest acceptable for CLI tools
@@ -35,7 +35,7 @@ delta = "latest"   # Better git diffs (pager)
 
 # SSH & Remote tools
 cloudflared = "latest"   # Cloudflare Access tunnel
-mosh = "latest"          # Mobile SSH (requires brew install mosh)
+# mosh = "latest"          # Mobile SSH (requires brew install mosh)
 tmux = "latest"          # Terminal multiplexer (already installed via brew)
 
 [settings]
