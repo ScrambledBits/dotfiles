@@ -1,0 +1,94 @@
+# Emilio Castro's SSH Configuration
+# Managed by chezmoi: https://www.chezmoi.io/
+# Source: {{ .chezmoi.sourceDir }}
+
+# =============================================================================
+# OrbStack Integration (macOS only — Linux VMs via OrbStack)
+# =============================================================================
+{{- if eq .chezmoi.os "darwin" }}
+# Must be at top - includes OrbStack's auto-generated config
+Include ~/.orbstack/ssh/config
+{{- end }}
+
+# =============================================================================
+# Machine-local host overrides (NOT tracked in git — create manually)
+# =============================================================================
+# Add work hosts, personal VPSes, and other machine-specific entries to
+# ~/.ssh/config.local (never committed). Example structure:
+#
+#   Host myserver
+#       HostName 1.2.3.4
+#       User myuser
+#       IdentityFile ~/.ssh/id_rsa
+#
+#   Host *.mycompany.com
+#       ProxyCommand cloudflared access ssh --hostname %h
+#       IdentityFile ~/.ssh/id_rsa
+#       UserKnownHostsFile ~/.ssh/known_hosts_work
+#
+Include ~/.ssh/config.local
+
+# =============================================================================
+# GitHub (Primary Git Host)
+# =============================================================================
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+{{- if eq .chezmoi.os "darwin" }}
+    UseKeychain yes
+{{- end }}
+    PreferredAuthentications publickey
+
+# =============================================================================
+# GitLab
+# =============================================================================
+Host gitlab.com
+    HostName gitlab.com
+    User git
+    IdentityFile ~/.ssh/id_rsa
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+{{- if eq .chezmoi.os "darwin" }}
+    UseKeychain yes
+{{- end }}
+    PreferredAuthentications publickey
+
+# =============================================================================
+# Universal Defaults
+# =============================================================================
+Host *
+    # Modern encryption (2024+)
+    KexAlgorithms curve25519-sha256@libssh.org
+    Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+    MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+
+    # Performance
+    Compression yes
+    TCPKeepAlive yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 2
+
+    # Security
+    StrictHostKeyChecking accept-new
+    UpdateHostKeys yes
+    HashKnownHosts yes
+
+    # Agent forwarding (disabled by default)
+    ForwardAgent no
+    ForwardX11 no
+
+    # Control sockets for multiplexing
+    ControlMaster auto
+    # ControlPath ~/.ssh/sockets/%r@%h-%p
+    ControlPersist 600
+
+    # Identity files (in order of preference)
+    IdentityFile ~/.ssh/id_rsa
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+{{- if eq .chezmoi.os "darwin" }}
+    UseKeychain yes
+{{- end }}
