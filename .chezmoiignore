@@ -27,3 +27,6 @@
 # VS Code runtime files (keep argv.json only)
 .vscode/extensions
 .vscode/cli
+
+# Brewfile is source-side input for run_onchange script, not a deployed dotfile
+Brewfile

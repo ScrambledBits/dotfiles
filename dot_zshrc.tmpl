@@ -51,27 +51,27 @@ zstyle ':completion:*:approximate:*' max-errors 2
 
 # Plugins (tailored to your actual workflow)
 plugins=(
-    aliases
     alias-finder
-    git
-    macos
-    man
+    aliases
+    ansible
     brew
-    fzf
     colored-man-pages
     docker
     docker-compose
     emoji
+    fzf
+    git
     git-extras
     gitignore
     globalias
     history
     kubectl
+    macos
+    man
+    mise  # Added: version manager integration
     pip
     python
     terraform
-    ansible
-    mise  # Added: version manager integration
 )
 
 # Load OMZ
@@ -145,22 +145,6 @@ alias tfaa='terraform apply -auto-approve'
 alias tfd='terraform destroy'
 alias tfws='terraform workspace'
 alias tfss='terraform state show'
-
-# Git (extended aliases from your setup)
-alias g='git'
-alias gs='git status'
-alias gd='git diff'
-alias gds='git diff --staged'
-alias gco='git checkout'
-alias gcb='git checkout -b'
-alias gcm='git commit -m'
-alias gcam='git commit -am'
-alias gp='git push'
-alias gpl='git pull'
-alias gfp='git fetch --prune'
-alias gl='git log --oneline --graph --decorate'
-alias gst='git stash'
-alias gsp='git stash pop'
 
 # Docker (OrbStack handles context)
 alias d='docker'

@@ -1,0 +1,37 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Run brew bundle on Brewfile changes. Managed by chezmoi - do not edit directly.
+set -euo pipefail
+
+# Ensure brew is on PATH (chezmoi does not source shell profiles).
+if [ -f /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -f /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+else
+    echo "ERROR: Homebrew not found. Run chezmoi apply again after installing Homebrew." >&2
+    exit 1
+fi
+
+echo "Running brew bundle..."
+
+# Brewfile content is captured here so chezmoi detects changes and re-runs this script.
+# Command substitution strips trailing newlines, which is fine for brew bundle.
+BREWFILE_CONTENT=$(cat <<'BREWFILE'
+{{ include "Brewfile" }}
+BREWFILE
+)
+
+# mas (Mac App Store) requires an interactive App Store sign-in.
+# Filter out mas lines when not signed in to avoid blocking the install.
+if command -v mas >/dev/null 2>&1 && mas account >/dev/null 2>&1; then
+    echo "App Store account: $(mas account)"
+    printf '%s\n' "$BREWFILE_CONTENT" | brew bundle --file=-
+else
+    echo "WARNING: Not signed in to App Store. Skipping mas entries."
+    echo "         Sign in via App Store app, then re-run: chezmoi apply"
+    printf '%s\n' "$BREWFILE_CONTENT" | grep -v '^mas ' | brew bundle --file=-
+fi
+
+echo "brew bundle complete."
+{{- end }}

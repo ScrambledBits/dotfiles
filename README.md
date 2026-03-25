@@ -4,26 +4,41 @@ Configuración de Senior Cloud & DevOps Engineer gestionada por [chezmoi](https:
 
 ## Inicio Rápido
 
+### Máquina nueva
+
 ```bash
-# Instalar chezmoi
+# 1. Instalar chezmoi (única dependencia inicial)
 brew install chezmoi
 
-# Inicializar desde este repositorio
+# 2. Inicializar y aplicar todo en un solo paso
 chezmoi init --apply git@github.com:ScrambledBits/dotfiles.git
 
-# Durante la inicialización, se te preguntará por:
+# Durante la inicialización se te pedirá:
 # - Nombre completo
 # - Correo electrónico
 # - Usuario de GitHub
 # - Zona horaria (ej. America/Mexico_City)
 # ¡Esto mantiene tu información personal fuera del repositorio!
-
-# Instalar todas las versiones de herramientas gestionadas
-mise install
-
-# O aplicar cambios después de editar
-chezmoi apply
 ```
+
+Esto hará automáticamente:
+1. Instala Homebrew si no está presente
+2. Ejecuta `brew bundle` para instalar todos los paquetes del `Brewfile`
+3. Aplica todos los dotfiles en `~`
+
+> **Nota sobre App Store:** Si las apps de `mas` no se instalan, inicia sesión en la App Store y vuelve a ejecutar `chezmoi apply`.
+
+### Máquina existente (ya inicializada)
+
+```bash
+# Aplicar cambios (incluyendo nuevos paquetes en Brewfile)
+chezmoi apply
+
+# Instalar versiones de herramientas definidas en mise
+mise install
+```
+
+Cada vez que modifiques el `Brewfile` y ejecutes `chezmoi apply`, se correrá `brew bundle` automáticamente.
 
 ## Qué Incluye
 
