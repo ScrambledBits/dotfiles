@@ -1,0 +1,32 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+# Run brew bundle on Brewfile changes (Linux: cask and mas entries skipped).
+# Managed by chezmoi - do not edit directly.
+set -euo pipefail
+
+# Add Homebrew to PATH (chezmoi does not source shell profiles).
+if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
+    eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+else
+    echo "ERROR: Homebrew not found. Run chezmoi apply again after installing Homebrew." >&2
+    exit 1
+fi
+
+echo "Running brew bundle (Linux: cask and mas entries skipped)..."
+
+# Brewfile content is captured here so chezmoi detects changes and re-runs this script.
+BREWFILE_CONTENT=$(cat <<'BREWFILE'
+{{ include "Brewfile" }}
+BREWFILE
+)
+
+# Filter out cask and mas lines — not supported on Homebrew for Linux.
+printf '%s\n' "$BREWFILE_CONTENT" \
+    | grep -v '^cask ' \
+    | grep -v '^mas '  \
+    | brew bundle --file=-
+
+echo "brew bundle complete."
+{{- end }}
