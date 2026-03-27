@@ -8,7 +8,6 @@ python = "latest"
 uv = "latest"   # Replaces poetry + ruff + pip (fast, unified Python toolchain)
 
 # Node.js for slidev and modern tools
-# NOTE: Node 20 reaches end-of-maintenance April 2026 — pinned to 24 (Active LTS)
 node = "latest"
 
 # Go for cloud-native tools
@@ -25,18 +24,10 @@ terraform = "latest"
 terragrunt = "latest"
 tflint = "latest"
 
-# Cloud CLIs
-"pipx:awscli" = "latest"   # AWS CLI; pinning to latest acceptable for CLI tools
-
 # Developer tools
 fd = "latest"
 lazygit = "latest"
 delta = "latest"   # Better git diffs (pager)
-
-# SSH & Remote tools
-cloudflared = "latest"   # Cloudflare Access tunnel
-# mosh = "latest"          # Mobile SSH (requires brew install mosh)
-tmux = "latest"          # Terminal multiplexer (already installed via brew)
 
 [settings]
 # Automatically install missing tools when entering directories
@@ -47,7 +38,7 @@ experimental = true
 PYTHONDONTWRITEBYTECODE = "1"
 PIP_REQUIRE_VIRTUALENV = "true"
 
-[tool_alias]
+[shell_alias]
 # Short names for common tools
 tf = "terraform"
 tg = "terragrunt"
