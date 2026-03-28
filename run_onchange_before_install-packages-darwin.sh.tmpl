@@ -16,9 +16,10 @@ fi
 echo "Running brew bundle..."
 
 # Brewfile content is captured here so chezmoi detects changes and re-runs this script.
-# Command substitution strips trailing newlines, which is fine for brew bundle.
+# Includes shared cross-platform packages (Brewfile) and macOS-specific additions (Brewfile.MacOS).
 BREWFILE_CONTENT=$(cat <<'BREWFILE'
 {{ include "Brewfile" }}
+{{ include "Brewfile.MacOS" }}
 BREWFILE
 )
 

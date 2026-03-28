@@ -28,8 +28,9 @@
 .vscode/extensions
 .vscode/cli
 
-# Brewfile is source-side input for run_onchange script, not a deployed dotfile
+# Brewfiles are source-side inputs for run_onchange scripts, not deployed dotfiles
 Brewfile
+Brewfile.MacOS
 
 # Ghostty: deploy macOS config only on macOS, Linux config only on Linux
 {{ if ne .chezmoi.os "darwin" }}
