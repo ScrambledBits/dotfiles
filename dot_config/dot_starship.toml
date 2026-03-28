@@ -1,0 +1,178 @@
+# Starship Prompt Configuration
+# https://starship.rs/config/
+# Optimized for DevOps/Teaching workflow — works identically on macOS and Linux.
+# Config path: ~/.config/starship.toml (XDG standard, same on all platforms)
+
+# Performance & Layout
+add_newline = true
+command_timeout = 1000      # ms before a module is skipped
+scan_timeout = 30           # ms to scan for files
+
+# Custom prompt format with box-drawing characters
+format = """\
+[╭╴](238)$env_var\
+$all[╰─](238)$character"""
+
+# =============================================================================
+# Core Identity
+# =============================================================================
+[character]
+success_symbol = "[](238)"
+error_symbol   = "[](238)"
+vicmd_symbol   = "[N](bold green)"  # Shown when in vim normal mode
+
+[env_var.STARSHIP_DISTRO]
+format   = '[$env_value](bold white) '
+variable = "STARSHIP_DISTRO"
+disabled = false
+
+[username]
+style_user  = "white bold"
+style_root  = "black bold"
+format      = "[$user]($style) "
+disabled    = false
+show_always = true
+
+# =============================================================================
+# Filesystem & Version Control
+# =============================================================================
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+home_symbol       = " ~"
+read_only_style   = "197"
+read_only         = "  "
+format            = "at [$path]($style)[$read_only]($read_only_style) "
+
+[directory.substitutions]
+"~/Projects"          = " Projects"
+"~/Projects/teaching" = " Teaching"
+"~/Projects/dotfiles" = " Dotfiles"
+
+[git_branch]
+symbol            = " "
+format            = "on [$symbol$branch]($style) "
+truncation_length = 10
+truncation_symbol = "…/"
+style             = "bold green"
+
+[git_status]
+format     = '[\($all_status$ahead_behind\)]($style) '
+style      = "bold green"
+conflicted = "🏳"
+up_to_date = " "
+untracked  = " "
+ahead      = "⇡${count}"
+diverged   = "⇕⇡${ahead_count}⇣${behind_count}"
+behind     = "⇣${count}"
+stashed    = " "
+modified   = " "
+staged     = '[++\($count\)](green)'
+renamed    = "襁 "
+deleted    = " "
+
+# =============================================================================
+# Cloud & Infrastructure (Primary Workflow)
+# =============================================================================
+[terraform]
+symbol            = " "
+format            = "via [$symbol$workspace]($style) "
+style             = "bold purple"
+detect_extensions = ["tf", "tfvars", "hcl"]
+
+[kubernetes]
+format         = 'on [ $context\($namespace\)](bold purple) '
+disabled       = false
+detect_files   = ["deployment.yaml", "docker-compose.yml"]
+detect_folders = ["manifests", "charts"]
+
+[kubernetes.context_aliases]
+'gke_.*'         = 'GKE'
+'arn:aws:eks:.*' = 'EKS'
+'default'        = '⎈'
+
+[gcloud]
+format         = 'on [☁️  $account(\($project\))]($style) '
+style          = "bold blue"
+detect_files   = ["credentials", "gcloud"]
+detect_folders = ["gcloud"]
+
+[aws]
+format            = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
+style             = 'bold 214'
+symbol            = ' '
+detect_files      = ["credentials", "config"]
+detect_folders    = ["aws"]
+
+[docker_context]
+format         = "via [ $context](bold blue) "
+detect_files   = ["docker-compose.yml", "Dockerfile"]
+detect_folders = ["docker"]
+
+# =============================================================================
+# Languages & Tooling (Teaching Stack)
+# =============================================================================
+[python]
+symbol            = " "
+python_binary     = "python3"
+format            = 'via [${symbol}${pyenv_prefix}${version}(\($virtualenv\))]($style) '
+style             = "bold yellow"
+detect_extensions = ["py", "pyc", "pyo", "pyw"]
+detect_files      = ["requirements.txt", "pyproject.toml", "Pipfile", "uv.lock"]
+detect_folders    = ["__pycache__", ".venv", "venv"]
+
+[uv]
+symbol       = " "
+format       = 'via [${symbol}${version}]($style) '
+style        = "bold yellow"
+detect_files = ["uv.lock", "pyproject.toml"]
+
+[rust]
+symbol            = " "
+format            = 'via [${symbol}${version}]($style) '
+style             = "bold orange"
+detect_extensions = ["rs", "ron"]
+detect_files      = ["Cargo.toml", "Cargo.lock"]
+
+[go]
+symbol            = " "
+format            = 'via [${symbol}${version}]($style) '
+style             = "bold cyan"
+detect_extensions = ["go"]
+detect_files      = ["go.mod", "go.sum"]
+
+# =============================================================================
+# Package Managers & DevOps Tools
+# =============================================================================
+[helm]
+format = "via [ $version](bold purple) "
+
+[ansible]
+format         = "via [ $version](bold yellow) "
+detect_files   = ["ansible.cfg", "inventory"]
+detect_folders = ["ansible"]
+
+[mise]
+symbol = " "
+format = 'via [${symbol}${version}]($style) '
+style  = "bold blue"
+
+[nodejs]
+disabled = true
+
+[ruby]
+disabled = true
+
+[vagrant]
+disabled = true
+
+# =============================================================================
+# UX Enhancements
+# =============================================================================
+[cmd_duration]
+min_duration = 500
+format       = 'took [$duration]($style) '
+style        = "dimmed italic"
+
+[line_break]
+disabled = false
