@@ -19,7 +19,7 @@ $all[╰─](238)$character"""
 [character]
 success_symbol = "[](238)"
 error_symbol   = "[](238)"
-vicmd_symbol   = "[N](bold green)"  # Shown when in vim normal mode
+vimcmd_symbol  = "[N](bold green)"  # Shown when in vim normal mode
 
 [env_var.STARSHIP_DISTRO]
 format   = '[$env_value](bold white) '
