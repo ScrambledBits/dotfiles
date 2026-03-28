@@ -30,3 +30,12 @@
 
 # Brewfile is source-side input for run_onchange script, not a deployed dotfile
 Brewfile
+
+# Ghostty: deploy macOS config only on macOS, Linux config only on Linux
+{{ if ne .chezmoi.os "darwin" }}
+Library/Application Support/com.mitchellh.ghostty/config.ghostty
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+.config/ghostty/config.ghostty
+{{ end }}
