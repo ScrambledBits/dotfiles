@@ -1,17 +1,18 @@
 tap "cloudflare/cloudflare"
 
-# Language and version managers like rbenv, tfenv, go, openjdk, yarn are omitted 
-# as they are better managed by mise.
+# Language and version managers (rbenv, tfenv, go, yarn, etc.) are omitted —
+# they are managed by mise. See dot_config/mise/config.toml.
+#
+# chezmoi is omitted — it must be installed BEFORE running chezmoi init --apply.
+# See README.md for bootstrap instructions.
 
 brew "tree"
 brew "ansible"
 brew "awscli"
 brew "bat"
 brew "bat-extras"
-brew "chezmoi"
 brew "checkov"
 brew "cloudflared"
-brew "cocoapods"
 brew "curl"
 brew "direnv"
 brew "dive"
@@ -28,7 +29,6 @@ brew "krew"
 brew "kubectx"
 brew "kustomize"
 brew "librsvg"
-brew "mas"
 brew "mise"
 brew "mosh"
 brew "neovim"
@@ -43,6 +43,7 @@ brew "stern"
 brew "testdisk"
 brew "tmux"
 brew "trivy"
+brew "uv"
 brew "watch"
 brew "watchman"
 brew "wget"
@@ -53,8 +54,6 @@ cask "caffeine"
 cask "font-monaspace"
 cask "ghostty"
 cask "vlc"
-
-mas "Xcode", id: 497799835
 
 vscode "4ops.terraform"
 vscode "anthropic.claude-code"
