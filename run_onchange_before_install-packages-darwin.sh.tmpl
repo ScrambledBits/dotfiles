@@ -19,6 +19,7 @@ echo "Running brew bundle..."
 # Includes shared cross-platform packages (Brewfile) and macOS-specific additions (Brewfile.MacOS).
 BREWFILE_CONTENT=$(cat <<'BREWFILE'
 {{ include "Brewfile" }}
+
 {{ include "Brewfile.MacOS" }}
 BREWFILE
 )
