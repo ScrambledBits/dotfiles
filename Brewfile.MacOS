@@ -13,7 +13,6 @@ brew "llmfit"
 brew "mas"
 brew "ollama", restart_service: :changed
 brew "openai-whisper"
-brew "pkgconf"
 brew "poppler"
 brew "rabbitmq"
 brew "tectonic"
