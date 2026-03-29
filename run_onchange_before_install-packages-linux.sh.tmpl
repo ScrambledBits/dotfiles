@@ -22,6 +22,10 @@ BREWFILE_CONTENT=$(cat <<'BREWFILE'
 BREWFILE
 )
 
+# Update brew packages
+brew update --quiet
+brew upgrade --quiet
+
 # Filter out cask and mas lines — not supported on Homebrew for Linux.
 printf '%s\n' "$BREWFILE_CONTENT" \
     | grep -v '^cask ' \

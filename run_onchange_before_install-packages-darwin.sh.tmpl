@@ -24,6 +24,10 @@ BREWFILE_CONTENT=$(cat <<'BREWFILE'
 BREWFILE
 )
 
+# Update and upgrade all brew packages
+brew update --quiet
+brew upgrade --quiet
+
 # mas (Mac App Store) requires an interactive App Store sign-in.
 # Filter out mas lines when not signed in to avoid blocking the install.
 # || true: brew bundle exits non-zero when any package fails; we treat
