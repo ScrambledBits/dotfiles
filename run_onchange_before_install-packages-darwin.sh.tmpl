@@ -26,13 +26,15 @@ BREWFILE
 
 # mas (Mac App Store) requires an interactive App Store sign-in.
 # Filter out mas lines when not signed in to avoid blocking the install.
-if command -v mas >/dev/null 2>&1 && mas account >/dev/null 2>&1; then
-    echo "App Store account: $(mas account)"
-    printf '%s\n' "$BREWFILE_CONTENT" | brew bundle --file=-
+# || true: brew bundle exits non-zero when any package fails; we treat
+# individual failures as warnings so the overall script does not abort.
+if command -v mas >/dev/null 2>&1 && mas outdated >/dev/null 2>&1; then
+    echo "App Store: signed in"
+    printf '%s\n' "$BREWFILE_CONTENT" | brew bundle --file=- || true
 else
     echo "WARNING: Not signed in to App Store. Skipping mas entries."
     echo "         Sign in via App Store app, then re-run: chezmoi apply"
-    printf '%s\n' "$BREWFILE_CONTENT" | grep -v '^mas ' | brew bundle --file=-
+    printf '%s\n' "$BREWFILE_CONTENT" | grep -v '^mas ' | brew bundle --file=- || true
 fi
 
 echo "brew bundle complete."

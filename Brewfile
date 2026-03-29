@@ -1,11 +1,5 @@
 tap "cloudflare/cloudflare"
 
-# Language and version managers (rbenv, tfenv, go, yarn, etc.) are omitted —
-# they are managed by mise. See dot_config/mise/config.toml.
-#
-# chezmoi is omitted — it must be installed BEFORE running chezmoi init --apply.
-# See README.md for bootstrap instructions.
-
 brew "tree"
 brew "ansible"
 brew "awscli"
@@ -49,11 +43,6 @@ brew "watchman"
 brew "wget"
 brew "yq"
 brew "zoxide"
-
-cask "caffeine"
-cask "font-monaspace"
-cask "ghostty"
-cask "vlc"
 
 vscode "4ops.terraform"
 vscode "anthropic.claude-code"
