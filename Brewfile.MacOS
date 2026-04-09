@@ -10,6 +10,7 @@ brew "poppler"
 brew "rabbitmq"
 brew "tectonic"
 brew "watson"
+# brew "gnupg"
 
 cask "dbeaver-community"
 cask "mysqlworkbench"
