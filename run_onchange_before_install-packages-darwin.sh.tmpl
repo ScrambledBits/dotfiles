@@ -24,21 +24,22 @@ BREWFILE_CONTENT=$(cat <<'BREWFILE'
 BREWFILE
 )
 
-# Update and upgrade all brew packages
+# Fetch latest formula metadata
 brew update --quiet
-brew upgrade --quiet
 
 # mas (Mac App Store) requires an interactive App Store sign-in.
 # Filter out mas lines when not signed in to avoid blocking the install.
+# --upgrade: keeps Brewfile-managed packages current without touching
+#            packages installed outside the Brewfile.
 # || true: brew bundle exits non-zero when any package fails; we treat
-# individual failures as warnings so the overall script does not abort.
+#          individual failures as warnings so the overall script does not abort.
 if command -v mas >/dev/null 2>&1 && mas outdated >/dev/null 2>&1; then
     echo "App Store: signed in"
-    printf '%s\n' "$BREWFILE_CONTENT" | brew bundle --file=- || true
+    printf '%s\n' "$BREWFILE_CONTENT" | brew bundle install --upgrade --file=- || true
 else
     echo "WARNING: Not signed in to App Store. Skipping mas entries."
     echo "         Sign in via App Store app, then re-run: chezmoi apply"
-    printf '%s\n' "$BREWFILE_CONTENT" | grep -v '^mas ' | brew bundle --file=- || true
+    printf '%s\n' "$BREWFILE_CONTENT" | grep -v '^mas ' | brew bundle install --upgrade --file=- || true
 fi
 
 echo "brew bundle complete."
