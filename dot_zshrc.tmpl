@@ -1,4 +1,3 @@
-# Emilio Castro's ZSH Configuration
 # Managed by chezmoi: https://www.chezmoi.io/
 # Source: {{ .chezmoi.sourceDir }}
 
@@ -19,18 +18,9 @@ if [[ -f "$HOME/.config/shell/paths" ]]; then
 fi
 
 # =============================================================================
-# 2. Completion Caching (Performance)
+# 2. Completion Cache Path (OMZ manages compinit)
 # =============================================================================
-COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump-${ZSH_VERSION}"
-mkdir -p "${COMPDUMP:h}"
-autoload -Uz compinit
-
-# Refresh cache only if missing or older than 24h
-if [[ ! -f $COMPDUMP || $(( $(date +%s) - $(stat -f %m "$COMPDUMP" 2>/dev/null || echo 0) )) -gt 86400 ]]; then
-    compinit -i -d "$COMPDUMP"
-else
-    compinit -C -d "$COMPDUMP"
-fi
+export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump-${ZSH_VERSION}"
 
 # =============================================================================
 # 3. Oh My Zsh Configuration
@@ -58,24 +48,24 @@ plugins=(
     colored-man-pages
     docker
     docker-compose
-    emoji
-    fzf
     git
     git-extras
     gitignore
-    globalias
     history
     kubectl
     macos
     man
-    mise  # Added: version manager integration
-    pip
-    python
+    mise
     terraform
 )
 
 # Load OMZ
 source "$ZSH/oh-my-zsh.sh"
+
+[[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+    source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$(brew --prefix)/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] && \
+    source "$(brew --prefix)/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 
 # =============================================================================
 # 4. Prompt (Starship)
@@ -103,7 +93,7 @@ fi
 eval "$(zoxide init zsh)"
 
 # FZF configuration (already in your setup)
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+command -v fzf &>/dev/null && source <(fzf --zsh)
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
@@ -124,7 +114,7 @@ alias ls='eza --icons --group-directories-first'
 alias ll='eza -l --icons'
 alias la='eza -la --icons'
 alias lt='eza --tree --icons --group-directories-first'
-alias l='ls -la'
+alias l='la'
 
 # Kubernetes (k9s, stern, kubectx already installed)
 alias k='kubectl'
@@ -162,7 +152,6 @@ alias ports='lsof -i -P -n | grep LISTEN'
 
 # Python (via uv/mise)
 alias py='python3'
-alias uv='uv'
 
 # GCP (gcloud already sourced below)
 
@@ -177,15 +166,15 @@ fi
 # =============================================================================
 # 9. Git Extras Completion
 # =============================================================================
-if [[ -f /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh ]]; then
-    source /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh
+if [[ -f "$(brew --prefix)/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]]; then
+    source "$(brew --prefix)/opt/git-extras/share/git-extras/git-extras-completion.zsh"
 fi
 
 # =============================================================================
 # 10. OpenClaw Completion
 # =============================================================================
-if [ -f "/Users/emilio/.openclaw/completions/openclaw.zsh" ]; then
-    source "/Users/emilio/.openclaw/completions/openclaw.zsh"
+if [ -f "$HOME/.openclaw/completions/openclaw.zsh" ]; then
+    source "$HOME/.openclaw/completions/openclaw.zsh"
 fi
 
 # =============================================================================

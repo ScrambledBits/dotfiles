@@ -1,3 +1,4 @@
+brew "asciinema"
 brew "aws-vault"
 brew "cairo"
 brew "cocoapods"
@@ -9,6 +10,7 @@ brew "openai-whisper"
 brew "poppler"
 brew "rabbitmq"
 brew "tectonic"
+brew "vhs"
 brew "watson"
 # brew "gnupg"
 

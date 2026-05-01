@@ -20,7 +20,7 @@ rust = "latest"
 # NOTE: HashiCorp changed Terraform to BSL license in 2023.
 # OpenTofu (MPL 2.0, Linux Foundation) is a compatible alternative:
 #   opentofu = "1.9"   # uncomment to switch
-terraform = "latest"
+terraform = "1.15.0"
 terragrunt = "latest"
 tflint = "latest"
 
@@ -39,6 +39,21 @@ PYTHONDONTWRITEBYTECODE = "1"
 PIP_REQUIRE_VIRTUALENV = "true"
 
 [shell_alias]
-# Short names for common tools
 tf = "terraform"
 tg = "terragrunt"
+
+[tasks.tf-check]
+description = "Format check, lint, and validate Terraform in current directory"
+run = "terraform fmt -check -recursive && tflint --recursive && terraform validate"
+
+[tasks.tf-docs]
+description = "Generate Terraform module documentation"
+run = "terraform-docs markdown table --output-file README.md ."
+
+[tasks.k8s-check]
+description = "Validate Kubernetes manifests against current schemas"
+run = "kubeconform -strict -summary -ignore-missing-schemas ."
+
+[tasks.secrets-check]
+description = "Scan repository for leaked secrets"
+run = "gitleaks detect --no-banner"

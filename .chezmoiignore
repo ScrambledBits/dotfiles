@@ -8,7 +8,8 @@
 # Local shell overrides
 .zshrc.local
 
-# Claude runtime files (keep settings.json only)
+# Claude runtime files — settings.json excluded so machine-specific hooks are preserved
+.claude/settings.json
 .claude/backups
 .claude/cache
 .claude/downloads

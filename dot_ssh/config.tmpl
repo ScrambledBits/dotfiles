@@ -34,6 +34,7 @@ Include ~/.ssh/config.local
 Host github.com
     HostName github.com
     User git
+    IdentityFile ~/.ssh/id_ed25519
     IdentityFile ~/.ssh/id_rsa
     IdentitiesOnly yes
     AddKeysToAgent yes
@@ -48,6 +49,7 @@ Host github.com
 Host gitlab.com
     HostName gitlab.com
     User git
+    IdentityFile ~/.ssh/id_ed25519
     IdentityFile ~/.ssh/id_rsa
     IdentitiesOnly yes
     AddKeysToAgent yes
@@ -82,10 +84,11 @@ Host *
 
     # Control sockets for multiplexing
     ControlMaster auto
-    # ControlPath ~/.ssh/sockets/%r@%h-%p
+    ControlPath ~/.ssh/sockets/%r@%h-%p
     ControlPersist 600
 
-    # Identity files (in order of preference)
+    # Identity files (Ed25519 preferred; RSA as fallback for legacy hosts)
+    IdentityFile ~/.ssh/id_ed25519
     IdentityFile ~/.ssh/id_rsa
     IdentitiesOnly yes
     AddKeysToAgent yes

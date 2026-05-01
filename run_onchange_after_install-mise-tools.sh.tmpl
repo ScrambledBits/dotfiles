@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Re-runs whenever dot_config/mise/config.toml changes so new global tools
+# are installed automatically on the next chezmoi apply.
+# mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+set -o errexit -o nounset -o pipefail
+
+if command -v mise >/dev/null 2>&1; then
+    echo "Installing mise tools..."
+    mise install
+else
+    echo "WARNING: mise not found. Run 'brew install mise' then 'mise install'." >&2
+fi
