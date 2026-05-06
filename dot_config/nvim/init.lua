@@ -85,25 +85,26 @@ require("lazy").setup({
     },
 
     -- Syntax highlighting (replaces vim-polyglot)
+    -- Pinned to master: stable API, pre-built parsers, no tree-sitter-cli required
     {
         "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-        config = function()
-            require("nvim-treesitter.configs").setup({
-                ensure_installed = {
-                    "bash", "dockerfile", "go", "hcl", "json",
-                    "lua", "python", "rust", "terraform", "yaml",
-                },
-                highlight = { enable = true },
-                indent    = { enable = true },
-            })
-        end,
+        branch = "master",
+        build  = ":TSUpdate",
+        main   = "nvim-treesitter.configs",
+        opts   = {
+            ensure_installed = {
+                "bash", "dockerfile", "go", "hcl", "json",
+                "lua", "python", "rust", "terraform", "yaml",
+            },
+            highlight = { enable = true },
+            indent    = { enable = true },
+        },
     },
 
     -- Statusline (replaces lightline)
     {
         "nvim-lualine/lualine.nvim",
-        opts = { options = { theme = "onehalfdark" } },
+        opts = { options = { theme = "auto" } },
     },
 
     -- Commenting (replaces NERDCommenter)
