@@ -20,7 +20,7 @@ rust = "latest"
 # NOTE: HashiCorp changed Terraform to BSL license in 2023.
 # OpenTofu (MPL 2.0, Linux Foundation) is a compatible alternative:
 #   opentofu = "1.9"   # uncomment to switch
-terraform = "1.15.0"
+terraform = "1.15.7"
 terragrunt = "latest"
 tflint = "latest"
 
@@ -29,17 +29,12 @@ fd = "latest"
 lazygit = "latest"
 delta = "latest"   # Better git diffs (pager)
 
-[settings]
-# Automatically install missing tools when entering directories
-experimental = true
-
 [env]
 # Global environment variables
 PYTHONDONTWRITEBYTECODE = "1"
 PIP_REQUIRE_VIRTUALENV = "true"
 
 [shell_alias]
-tf = "terraform"
 tg = "terragrunt"
 
 [tasks.tf-check]

@@ -23,7 +23,6 @@
     rebase = true
 
 [push]
-    default = simple
     autoSetupRemote = true
 
 [fetch]
@@ -89,9 +88,6 @@
     # Review helpers
     review = log --oneline --reverse origin/main..HEAD
     files = diff --name-only origin/main...HEAD
-
-[color]
-    ui = auto
 
 [credential]
     helper = osxkeychain
