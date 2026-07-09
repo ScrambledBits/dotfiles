@@ -96,11 +96,9 @@ format = 'on [☁️  $account(\($project\))]($style) '
 style  = "bold blue"
 
 [aws]
-format            = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
-style             = 'bold 214'
-symbol            = ' '
-detect_files      = ["credentials", "config"]
-detect_folders    = ["aws"]
+format = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
+style  = 'bold 214'
+symbol = ' '
 
 [docker_context]
 format         = "via [ $context](bold blue) "
@@ -138,11 +136,6 @@ detect_files      = ["go.mod", "go.sum"]
 # =============================================================================
 [helm]
 format = "via [ $version](bold purple) "
-
-[ansible]
-format         = "via [ $version](bold yellow) "
-detect_files   = ["ansible.cfg", "inventory"]
-detect_folders = ["ansible"]
 
 [mise]
 symbol = " "
