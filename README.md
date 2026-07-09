@@ -98,11 +98,11 @@ Los paquetes se gestionan con dos archivos Homebrew que los scripts de instalaci
 
 **Shell (`dot_zshrc.tmpl`):** Oh My Zsh con tema robbyrussell. Integra mise, direnv, zoxide (`z` reemplaza `cd`), y Starship. Sources `~/.zshrc.local` para sobreescrituras locales. También carga `zsh-autosuggestions` y `fast-syntax-highlighting` si están instalados vía Homebrew.
 
-**Gestión de versiones (`dot_config/mise/config.toml`):** mise gestiona Python 3.13, Node 24, Go 1.26, Terraform 1.14.7, Terragrunt 0.99, TFLint 0.61, Poetry 2.3, Ruff 0.15, AWS CLI, fd y lazygit. Establece `PIP_REQUIRE_VIRTUALENV=true` para prevenir instalaciones globales de pip.
+**Gestión de versiones (`dot_config/mise/config.toml`):** mise gestiona Python, uv, Node, Go, Rust, Terraform 1.15.7, Terragrunt, TFLint, fd, lazygit y delta. Establece `PIP_REQUIRE_VIRTUALENV=true` para prevenir instalaciones globales de pip.
 
 **Entornos por directorio (`dot_config/direnv/direnvrc`):** Define funciones helper para archivos `.envrc` — `use_aws_profile()`, `use_gcp_project()`, `use_tf_workspace()`. La activación de mise se maneja por activación de shell, no por `use_mise()` (deprecado).
 
-**Prompt (`dot_config/dot_starship.toml`):** Muestra estado de git, contexto/namespace de Kubernetes (solo en directorios k8s), proyecto de GCP, workspace de Terraform, y duración de comandos. Ruta estándar XDG: `~/.config/starship.toml` — funciona igual en macOS y Linux.
+**Prompt (`dot_config/starship.toml`):** Muestra estado de git, contexto/namespace de Kubernetes (solo en directorios k8s), proyecto de GCP, workspace de Terraform, y duración de comandos. Ruta estándar XDG: `~/.config/starship.toml` — funciona igual en macOS y Linux.
 
 **Git (`dot_gitconfig.tmpl`):** Usa delta para diffs (side-by-side), rebase al hacer pull, poda automática de refs remotas, estilo de conflicto `zdiff3`, `rerere` habilitado. La firma SSH de commits es opt-in vía la variable `gitSigningKey`.
 

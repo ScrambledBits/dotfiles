@@ -50,7 +50,7 @@ vim.opt.rtp:prepend(lazypath)
 -- =============================================================================
 require("lazy").setup({
 
-    -- Colorscheme (same as vimrc: onehalfdark)
+    -- Colorscheme: onehalfdark
     {
         "sonph/onehalf",
         config = function(plugin)
