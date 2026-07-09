@@ -92,10 +92,8 @@ detect_folders = ["manifests", "charts"]
 'default'        = '⎈'
 
 [gcloud]
-format         = 'on [☁️  $account(\($project\))]($style) '
-style          = "bold blue"
-detect_files   = ["credentials", "gcloud"]
-detect_folders = ["gcloud"]
+format = 'on [☁️  $account(\($project\))]($style) '
+style  = "bold blue"
 
 [aws]
 format            = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
@@ -128,7 +126,7 @@ style             = "bold orange"
 detect_extensions = ["rs", "ron"]
 detect_files      = ["Cargo.toml", "Cargo.lock"]
 
-[go]
+[golang]
 symbol            = " "
 format            = 'via [${symbol}${version}]($style) '
 style             = "bold cyan"
