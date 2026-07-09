@@ -12,7 +12,6 @@ brew "rabbitmq"
 brew "tectonic"
 brew "vhs"
 brew "watson"
-# brew "gnupg"
 
 cask "dbeaver-community"
 cask "mysqlworkbench"
@@ -35,6 +34,7 @@ cask "font-droid-sans-mono-nerd-font"
 cask "font-fira-code-nerd-font"
 cask "font-fira-mono-nerd-font"
 cask "font-hack-nerd-font"
+cask "font-hurmit-nerd-font"
 cask "font-monaspice-nerd-font"
 cask "font-monocraft-nerd-font"
 cask "font-noto-nerd-font"
@@ -47,17 +47,6 @@ mas "iHosts", id: 1102004240
 mas "Pixelmator Pro", id: 6746662575
 mas "Trello", id: 1278508951
 mas "Xcode", id: 497799835
-
-# cargo "mdbook"
-# cargo "mdbook-admonish"
-# cargo "mdbook-alerts"
-# cargo "mdbook-d2"
-# cargo "mdbook-d2-png"
-# cargo "mdbook-emojicodes"
-# cargo "mdbook-epub"
-# cargo "mdbook-linkcheck"
-# cargo "mdbook-pandoc"
-# cargo "mdbook-pdf"
 
 uv "mdformat"
 uv "nano-pdf"

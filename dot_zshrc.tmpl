@@ -22,6 +22,9 @@ fi
 # =============================================================================
 export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump-${ZSH_VERSION}"
 
+# Homebrew prefix, captured once (each $(brew --prefix) forks a subprocess)
+command -v brew &>/dev/null && BREW_PREFIX="$(brew --prefix)"
+
 # =============================================================================
 # 3. Oh My Zsh Configuration
 # =============================================================================
@@ -62,14 +65,16 @@ plugins=(
 # Load OMZ
 source "$ZSH/oh-my-zsh.sh"
 
-[[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
-    source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-[[ -f "$(brew --prefix)/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] && \
-    source "$(brew --prefix)/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+[[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+    source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$BREW_PREFIX/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] && \
+    source "$BREW_PREFIX/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 
 # =============================================================================
 # 4. Prompt (Starship)
 # =============================================================================
+# OS icon rendered by the [env_var.STARSHIP_DISTRO] module in starship.toml
+export STARSHIP_DISTRO="{{ if eq .chezmoi.os "darwin" }}{{ else }}{{ end }}"
 eval "$(starship init zsh)"
 
 # =============================================================================
@@ -103,81 +108,33 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Editor
 alias vim='nvim'
-alias v='nvim'
 
-# Modern Core Utils (Bat/Eza — already in your setup)
+# Modern Core Utils (Bat/Eza)
+# k*/tf* aliases come from the OMZ kubectl/terraform plugins above
 alias cat='bat'
 alias grep='batgrep --terminal-width=200 --no-snip'
-alias man='batman'
 alias find='fd'
 alias ls='eza --icons --group-directories-first'
 alias ll='eza -l --icons'
 alias la='eza -la --icons'
-alias lt='eza --tree --icons --group-directories-first'
 alias l='la'
-
-# Kubernetes (k9s, stern, kubectx already installed)
-alias k='kubectl'
-alias kx='kubectx'
-alias kn='kubens'
-alias ksys='k -n kube-system'
-alias kg='kubectl get'
-alias kd='kubectl describe'
-alias kl='kubectl logs'
-alias klf='kubectl logs -f'
-
-# Terraform (already in your setup)
-alias tf='terraform'
-alias tfv='terraform validate'
-alias tfp='terraform plan'
-alias tfa='terraform apply'
-alias tfaa='terraform apply -auto-approve'
-alias tfd='terraform destroy'
-alias tfws='terraform workspace'
-alias tfss='terraform state show'
-
-# Docker (OrbStack handles context)
-alias d='docker'
-alias dc='docker-compose'
-
-# Teaching/Recording (your workflow)
-alias rec='asciinema rec'
-alias vhs-rec='vhs record'
-alias teaching='cd ~/Projects/teaching'
-alias projects='cd ~/Projects'
-
-# Networking
-alias myip='curl ifconfig.me'
-alias ports='lsof -i -P -n | grep LISTEN'
-
-# Python (via uv/mise)
-alias py='python3'
-
-# GCP (gcloud already sourced below)
 
 # =============================================================================
 # 8. GCP SDK
 # =============================================================================
-if [ -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]; then
-    source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
-    source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+if [ -f "$BREW_PREFIX/share/google-cloud-sdk/path.zsh.inc" ]; then
+    source "$BREW_PREFIX/share/google-cloud-sdk/path.zsh.inc"
+    source "$BREW_PREFIX/share/google-cloud-sdk/completion.zsh.inc"
 fi
 
 # =============================================================================
 # 9. Git Extras Completion
 # =============================================================================
-if [[ -f "$(brew --prefix)/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]]; then
-    source "$(brew --prefix)/opt/git-extras/share/git-extras/git-extras-completion.zsh"
+if [[ -f "$BREW_PREFIX/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]]; then
+    source "$BREW_PREFIX/opt/git-extras/share/git-extras/git-extras-completion.zsh"
 fi
 
 # =============================================================================
-# 10. OpenClaw Completion
-# =============================================================================
-if [ -f "$HOME/.openclaw/completions/openclaw.zsh" ]; then
-    source "$HOME/.openclaw/completions/openclaw.zsh"
-fi
-
-# =============================================================================
-# 11. Local Overrides (Not in Git)
+# 10. Local Overrides (Not in Git)
 # =============================================================================
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
