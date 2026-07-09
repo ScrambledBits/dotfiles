@@ -155,7 +155,7 @@ disabled = true
 # UX Enhancements
 # =============================================================================
 [cmd_duration]
-min_duration = 500
+min_time = 500
 format       = 'took [$duration]($style) '
 style        = "dimmed italic"
 
