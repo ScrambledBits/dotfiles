@@ -4,9 +4,7 @@
 # Config path: ~/.config/starship.toml (XDG standard, same on all platforms)
 
 # Performance & Layout
-add_newline = true
 command_timeout = 1000      # ms before a module is skipped
-scan_timeout = 30           # ms to scan for files
 
 # Custom prompt format with box-drawing characters
 format = """\
@@ -22,15 +20,12 @@ error_symbol   = "[](238)"
 vimcmd_symbol  = "[N](bold green)"  # Shown when in vim normal mode
 
 [env_var.STARSHIP_DISTRO]
-format   = '[$env_value](bold white) '
-variable = "STARSHIP_DISTRO"
-disabled = false
+format = '[$env_value](bold white) '
 
 [username]
 style_user  = "white bold"
 style_root  = "black bold"
 format      = "[$user]($style) "
-disabled    = false
 show_always = true
 
 # =============================================================================
@@ -145,19 +140,10 @@ style  = "bold blue"
 [nodejs]
 disabled = true
 
-[ruby]
-disabled = true
-
-[vagrant]
-disabled = true
-
 # =============================================================================
 # UX Enhancements
 # =============================================================================
 [cmd_duration]
 min_time = 500
-format       = 'took [$duration]($style) '
-style        = "dimmed italic"
-
-[line_break]
-disabled = false
+format   = 'took [$duration]($style) '
+style    = "dimmed italic"
