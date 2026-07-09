@@ -121,12 +121,6 @@ detect_extensions = ["py", "pyc", "pyo", "pyw"]
 detect_files      = ["requirements.txt", "pyproject.toml", "Pipfile", "uv.lock"]
 detect_folders    = ["__pycache__", ".venv", "venv"]
 
-[uv]
-symbol       = " "
-format       = 'via [${symbol}${version}]($style) '
-style        = "bold yellow"
-detect_files = ["uv.lock", "pyproject.toml"]
-
 [rust]
 symbol            = " "
 format            = 'via [${symbol}${version}]($style) '
