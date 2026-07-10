@@ -22,3 +22,9 @@ TODO.md
 README.md
 CLAUDE.md
 openspec/**
+.gitignore
+
+# macOS-only files (Ghostty Application Support symlink)
+{{ if ne .chezmoi.os "darwin" }}
+Library/**
+{{ end }}

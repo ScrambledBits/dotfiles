@@ -33,6 +33,12 @@ OpenSpec-driven remediation (`openspec/changes/`, all archived after implementat
 - Added `.github/workflows/chezmoi-dry-run.yml`: renders and dry-run applies on ubuntu-latest and macos-latest, shellchecks every rendered script, validates the Starship config.
 - `README.md`, `CLAUDE.md`, and the audit outputs no longer deploy into `$HOME` (added to `.chezmoiignore`).
 
+## 2026-07-10
+
+- Ghostty consolidado a un solo archivo `~/.config/ghostty/config` (apariencia real de la máquina: Hack Nerd Font Mono 20, tema Nocturnal Winter). Eliminados `config.ghostty` y el symlink en Application Support: en Ghostty ≥1.3 ese par sobreescribía la config del usuario (App Support carga al final y gana).
+- Firma de commits: eliminado `gpg.format = ssh`; `gitSigningKey` es un key ID de OpenPGP, con `format = ssh` git lo trata como ruta de llave SSH y la firma falla.
+- Docs: README (tema robbyrussell, tabla de versiones mise, aliases) y CLAUDE.md actualizados; comentario de `gitSigningKey` corregido en `.chezmoi.toml.tmpl`.
+
 ## 2026-07-09
 
 - Corregido: config de Starship se desplegaba a `~/.config/.starship.toml` (ruta muerta); ahora `dot_config/starship.toml` → `~/.config/starship.toml`.
