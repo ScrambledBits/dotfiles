@@ -182,13 +182,9 @@ alias my-alias="my-command"
 
 ### Datos de chezmoi locales
 
-Para cambiar variables de plantilla (correo de trabajo, llave SSH de firma) en una máquina ya inicializada, ejecuta:
+Los valores de plantilla (nombre, correo, llave de firma) se piden una sola vez en `chezmoi init` y persisten por máquina en `~/.config/chezmoi/chezmoi.toml` (nunca rastreado por git). Para cambiar uno, edita ese archivo y vuelve a ejecutar `chezmoi apply`.
 
-```bash
-chezmoi edit-config
-```
-
-Esto abre la configuración de chezmoi para esta máquina (no versionada) en tu editor.
+> Nota: chezmoi **no** lee `~/.chezmoidata/` del home; ese mecanismo documentado antes aquí no funcionaba.
 
 ### Herramientas de mise locales
 
@@ -229,14 +225,11 @@ Si una key propia de un proyecto no debe compartirse ni commitearse, agrega `.en
 
 ## Firma de Commits de Git (opcional)
 
-Para habilitar la firma de commits basada en SSH (sin necesidad de GPG):
+Para habilitar la firma de commits con GPG:
 
-1. Configura la llave de firma con `chezmoi edit-config` (o respóndela durante `chezmoi init`)
-2. Ejecuta `chezmoi apply` para regenerar `~/.gitconfig`
-3. Crea `~/.ssh/allowed_signers`:
-   ```
-   tu@correo.com ssh-ed25519 AAAA...
-   ```
+1. Obtén tu key ID: `gpg --list-secret-keys --keyid-format long`
+2. Configura `gitSigningKey` en `~/.config/chezmoi/chezmoi.toml` (o respóndelo en `chezmoi init`)
+3. Ejecuta `chezmoi apply` para regenerar `~/.gitconfig`
 
 ---
 

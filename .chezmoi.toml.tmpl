@@ -12,10 +12,9 @@ sourceDir = "{{ .chezmoi.sourceDir }}"
     email = {{ promptStringOnce . "email" "Email address" | quote }}
     github = {{ promptStringOnce . "github" "GitHub username" | quote }}
     timezone = {{ promptStringOnce . "timezone" "Timezone (e.g. America/Mexico_City)" | quote }}
-    # SSH public key path for git commit signing (Ed25519 recommended), e.g.
-    # "key::ssh-ed25519 AAAA... user@host". Leave blank (just press enter) to skip.
-    gitSigningKey = {{ promptStringOnce . "gitSigningKey" "SSH signing key (blank to skip)" "" | quote }}
+    # OpenPGP key ID for git commit signing (gpg --list-secret-keys --keyid-format long).
+    # Empty string skips commit signing configuration.
+    gitSigningKey = {{ promptStringOnce . "gitSigningKey" "GPG signing key ID (empty to skip)" | quote }}
 
-# Machine-specific overrides: run `chezmoi edit-config` on this machine to change
-# any [data] value above (e.g. a work email or a per-machine signing key) without
-# editing tracked files.
+# Values persist per machine in ~/.config/chezmoi/chezmoi.toml; promptStringOnce
+# only asks when a value is missing. To change one, edit that file directly.
