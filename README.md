@@ -122,17 +122,34 @@ Los paquetes se gestionan con dos archivos Homebrew que los scripts de instalaci
 
 ---
 
+## Versiones de Herramientas (mise)
+
+| Herramienta | Versión |
+|-------------|---------|
+| Python | latest |
+| uv | latest |
+| Node.js | latest |
+| Go | latest |
+| Rust | latest |
+| Terraform | 1.15.7 |
+| Terragrunt | latest |
+| TFLint | latest |
+
+> **Nota:** Terraform utiliza la licencia BSL de HashiCorp. [OpenTofu](https://opentofu.org/) (MPL 2.0) es una alternativa compatible — revisa `dot_config/mise/config.toml` para ver cómo alternar (comentado).
+
+---
+
 ## Alias Principales
+
+Los alias personalizados son mínimos; las familias `g*`, `tf*` y `k*` vienen de los plugins de OMZ (git, terraform, kubectl):
 
 | Alias | Comando |
 |-------|---------|
-| `tf` | terraform |
-| `k` | kubectl |
-| `kctx` | kubectx |
+| `vim` | nvim |
 | `cat` | bat |
+| `grep` | batgrep |
 | `find` | fd |
-| `projects` | cd ~/Projects |
-| `rec` | asciinema rec |
+| `ls`/`ll`/`la`/`l` | variantes de eza |
 
 Ver también las tareas de mise y los alias de git abajo.
 

@@ -10,6 +10,8 @@ sourceDir = "{{ .chezmoi.sourceDir }}"
 [data]
     name = {{ promptStringOnce . "name" "Full Name" | quote }}
     email = {{ promptStringOnce . "email" "Email address" | quote }}
+    github = {{ promptStringOnce . "github" "GitHub username" | quote }}
+    timezone = {{ promptStringOnce . "timezone" "Timezone (e.g. America/Mexico_City)" | quote }}
     # SSH public key path for git commit signing (Ed25519 recommended), e.g.
     # "key::ssh-ed25519 AAAA... user@host". Leave blank (just press enter) to skip.
     gitSigningKey = {{ promptStringOnce . "gitSigningKey" "SSH signing key (blank to skip)" "" | quote }}
