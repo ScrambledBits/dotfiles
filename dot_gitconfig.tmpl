@@ -40,12 +40,6 @@
 [rerere]
     enabled = true              # remember and replay recorded conflict resolutions
 {{ if .gitSigningKey }}
-[gpg]
-    format = ssh
-
-[gpg "ssh"]
-    allowedSignersFile = ~/.ssh/allowed_signers
-
 [commit]
     gpgsign = true
 
