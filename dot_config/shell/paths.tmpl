@@ -1,0 +1,21 @@
+# Managed by chezmoi — Homebrew prefix, templated per OS/arch (avoids forking
+# `brew --prefix` on every shell start); falls back to a live lookup if the
+# standard location is missing (e.g. a non-standard Homebrew install).
+{{- if eq .chezmoi.os "darwin" }}
+{{- if eq .chezmoi.arch "arm64" }}
+BREW_PREFIX="/opt/homebrew"
+{{- else }}
+BREW_PREFIX="/usr/local"
+{{- end }}
+{{- else }}
+BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+{{- end }}
+# Homebrew's own installer prefers /home/linuxbrew/.linuxbrew on Linux but
+# falls back to a per-user $HOME/.linuxbrew when it can't create that shared
+# prefix (e.g. no sudo) — check both before falling back to a live lookup,
+# which can't find brew either if nothing has put it on PATH yet.
+[[ -x "$BREW_PREFIX/bin/brew" ]] || BREW_PREFIX="$HOME/.linuxbrew"
+[[ -x "$BREW_PREFIX/bin/brew" ]] || BREW_PREFIX="$(command -v brew &>/dev/null && brew --prefix)"
+export BREW_PREFIX
+
+export PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$HOME/.local/bin:$PATH"

@@ -4,3 +4,12 @@ set -o errexit -o nounset -o pipefail
 if command -v gitleaks &>/dev/null; then
     gitleaks protect --staged --no-banner
 fi
+
+# Chain to a repo-local hook if one exists (e.g. from `pre-commit install -f`,
+# which writes into .git/hooks despite core.hooksPath being set globally).
+# `git rev-parse --git-path hooks` is NOT usable here — it resolves to this
+# global hooksPath itself, which would make this hook call itself.
+local_hook="$(git rev-parse --git-dir)/hooks/pre-commit"
+if [[ -x "${local_hook}" ]]; then
+    exec "${local_hook}" "$@"
+fi

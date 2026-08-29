@@ -26,7 +26,7 @@ vim.opt.gdefault     = true
 vim.opt.list         = false
 vim.opt.listchars    = { tab = "▸ ", trail = "·", extends = "#", nbsp = "·" }
 vim.opt.fileformats  = { "unix", "dos", "mac" }
-vim.opt.clipboard    = "unnamed"
+vim.opt.clipboard    = "unnamedplus"
 vim.opt.autoread     = true
 vim.opt.updatetime   = 1000
 vim.opt.termguicolors = true
@@ -77,39 +77,44 @@ require("lazy").setup({
         },
     },
 
-    -- File explorer (replaces NERDTree)
+    -- File explorer
     {
         "nvim-tree/nvim-tree.lua",
         opts = { filters = { dotfiles = false } },
         keys = { { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "File explorer" } },
     },
 
-    -- Syntax highlighting (replaces vim-polyglot)
-    -- Pinned to master: stable API, pre-built parsers, no tree-sitter-cli required
+    -- Syntax highlighting
+    -- main branch requires Neovim 0.12+ and the tree-sitter CLI (brew install
+    -- tree-sitter-cli); it doesn't support lazy-loading, hence lazy = false.
     {
         "nvim-treesitter/nvim-treesitter",
-        branch = "master",
+        branch = "main",
         build  = ":TSUpdate",
-        main   = "nvim-treesitter.configs",
-        opts   = {
-            ensure_installed = {
+        lazy   = false,
+        config = function()
+            local langs = {
                 "bash", "dockerfile", "go", "hcl", "json",
                 "lua", "python", "rust", "terraform", "yaml",
-            },
-            highlight = { enable = true },
-            indent    = { enable = true },
-        },
+            }
+            require("nvim-treesitter").install(langs)
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = { "sh", "bash", "dockerfile", "go", "hcl", "json",
+                            "lua", "python", "rust", "terraform", "yaml" },
+                callback = function()
+                    vim.treesitter.start()
+                    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                end,
+            })
+        end,
     },
 
-    -- Statusline (replaces lightline)
+    -- Statusline
     {
         "nvim-lualine/lualine.nvim",
         opts = { options = { theme = "auto" } },
     },
 
-    -- Commenting (replaces NERDCommenter)
-    { "numToStr/Comment.nvim", opts = {} },
-
-    -- Bracket pairing (replaces delimitMate)
+    -- Bracket pairing
     { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
 })

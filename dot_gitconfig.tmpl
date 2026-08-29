@@ -89,8 +89,10 @@
     review = log --oneline --reverse origin/main..HEAD
     files = diff --name-only origin/main...HEAD
 
+{{ if eq .chezmoi.os "darwin" }}
 [credential]
     helper = osxkeychain
+{{ end }}
 
 [filter "lfs"]
     clean = git-lfs clean -- %f

@@ -4,26 +4,26 @@
 # =============================================================================
 # 1. Environment & Paths (External Files)
 # =============================================================================
-# Create these manually: ~/.config/shell/.env, api_keys.env, paths
+# paths is chezmoi-managed (sets PATH and BREW_PREFIX); .env is machine-local,
+# create manually: ~/.config/shell/.env
 if [[ -f "$HOME/.config/shell/.env" ]]; then
     source "$HOME/.config/shell/.env"
-fi
-
-if [[ -f "$HOME/.config/shell/api_keys.env" ]]; then
-    source "$HOME/.config/shell/api_keys.env"
 fi
 
 if [[ -f "$HOME/.config/shell/paths" ]]; then
     source "$HOME/.config/shell/paths"
 fi
 
+# API keys (~/.config/shell/api_keys.env, machine-local) are deliberately NOT
+# sourced here — that put every key into every shell process. Opt a project
+# into the keys it needs with one line in its .envrc:
+#   dotenv_if_exists ~/.config/shell/api_keys.env
+# direnv loads it only while you're in that directory. See README.md.
+
 # =============================================================================
 # 2. Completion Cache Path (OMZ manages compinit)
 # =============================================================================
 export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump-${ZSH_VERSION}"
-
-# Homebrew prefix, captured once (each $(brew --prefix) forks a subprocess)
-command -v brew &>/dev/null && BREW_PREFIX="$(brew --prefix)"
 
 # =============================================================================
 # 3. Oh My Zsh Configuration
@@ -36,9 +36,6 @@ ENABLE_CORRECTION="true"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="dd/mm/yyyy"
 
-# Auto-update settings
-zstyle ':omz:update' mode reminder
-zstyle ':omz:update' frequency 13
 zstyle ':completion:::::' completer _complete _approximate
 zstyle ':completion:*:approximate:*' max-errors 2
 
@@ -56,14 +53,17 @@ plugins=(
     gitignore
     history
     kubectl
-    macos
+{{ if eq .chezmoi.os "darwin" }}    macos
+{{ end -}}
     man
     mise
     terraform
 )
 
 # Load OMZ
-source "$ZSH/oh-my-zsh.sh"
+if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
+    source "$ZSH/oh-my-zsh.sh"
+fi
 
 [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
     source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
@@ -73,18 +73,15 @@ source "$ZSH/oh-my-zsh.sh"
 # =============================================================================
 # 4. Prompt (Starship)
 # =============================================================================
-# OS icon rendered by the [env_var.STARSHIP_DISTRO] module in starship.toml
-export STARSHIP_DISTRO="{{ if eq .chezmoi.os "darwin" }}{{ else }}{{ end }}"
-eval "$(starship init zsh)"
+command -v starship &>/dev/null && eval "$(starship init zsh)"
 
 # =============================================================================
 # 5. Version Managers & Language Environments
 # =============================================================================
-# mise (primary version manager — replaces nvm, pyenv, rbenv)
-eval "$(mise activate zsh)"
+# mise activation comes from the OMZ mise plugin above — do not eval it again here.
 
 # direnv (per-directory environment variables)
-eval "$(direnv hook zsh)"
+command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 # Rust/Cargo environment (installed via mise)
 if [[ -f "$HOME/.cargo/env" ]]; then
@@ -94,10 +91,10 @@ fi
 # =============================================================================
 # 6. Shell Enhancements
 # =============================================================================
-# zoxide (smart cd — already in your setup)
-eval "$(zoxide init zsh)"
+# zoxide (smart cd)
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
 
-# FZF configuration (already in your setup)
+# FZF configuration
 command -v fzf &>/dev/null && source <(fzf --zsh)
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -119,22 +116,20 @@ alias ll='eza -l --icons'
 alias la='eza -la --icons'
 alias l='la'
 
-# =============================================================================
-# 8. GCP SDK
-# =============================================================================
-if [ -f "$BREW_PREFIX/share/google-cloud-sdk/path.zsh.inc" ]; then
-    source "$BREW_PREFIX/share/google-cloud-sdk/path.zsh.inc"
-    source "$BREW_PREFIX/share/google-cloud-sdk/completion.zsh.inc"
-fi
+# Navigation & teaching workflow
+alias kctx='kubectx'
+alias projects='cd ~/Projects'
+alias teaching='cd ~/Projects/teaching'
+alias rec='asciinema rec'
 
 # =============================================================================
-# 9. Git Extras Completion
+# 8. Git Extras Completion
 # =============================================================================
 if [[ -f "$BREW_PREFIX/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]]; then
     source "$BREW_PREFIX/opt/git-extras/share/git-extras/git-extras-completion.zsh"
 fi
 
 # =============================================================================
-# 10. Local Overrides (Not in Git)
+# 9. Local Overrides (Not in Git)
 # =============================================================================
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local

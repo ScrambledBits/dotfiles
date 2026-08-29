@@ -1,12 +1,13 @@
 # Files to exclude from chezmoi management
 # https://www.chezmoi.io/reference/special-files/chezmoiignore/
 
-# Machine-local secret overrides (create manually, never commit)
-.chezmoidata/local.toml
-.chezmoidata/secrets.yml
-
 # Local shell overrides
 .zshrc.local
+
+# Oh My Zsh runtime state and local customizations — the .oh-my-zsh external
+# below is an exact archive; these paths must stay untouched by it.
+.oh-my-zsh/cache
+.oh-my-zsh/custom/**
 
 # Claude runtime files — settings.json excluded so machine-specific hooks are preserved
 .claude/settings.json
@@ -25,20 +26,16 @@
 .claude/shell-snapshots
 .claude/history.jsonl
 
-# VS Code runtime files (keep argv.json only)
-.vscode/extensions
-.vscode/cli
-
 # Brewfiles are source-side inputs for run_onchange scripts, not deployed dotfiles
 Brewfile
 Brewfile.MacOS
 
-# Repo metadata, not dotfiles
+# Repo metadata and audit outputs, not dotfiles
 CHANGELOG.md
 TODO.md
-.gitignore
-
-# macOS-only files (Ghostty Application Support symlink)
-{{ if ne .chezmoi.os "darwin" }}
-Library/**
-{{ end }}
+README.md
+CLAUDE.md
+AUDIT_REPORT.md
+ROADMAP.md
+audit_findings.json
+claim-review/**
