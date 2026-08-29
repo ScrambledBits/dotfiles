@@ -2,18 +2,12 @@
 # https://direnv.net/
 #
 # NOTE: use_mise() has been removed — mise tool loading is handled automatically
-# by `eval "$(mise activate zsh)"` in .zshrc. No .envrc action needed for this.
+# by the OMZ mise plugin. No .envrc action needed for this.
 
 # AWS profile switching
 # Usage in .envrc: use_aws_profile my-profile
 use_aws_profile() {
     export AWS_PROFILE="$1"
-}
-
-# GCP project switching
-# Usage in .envrc: use_gcp_project my-gcp-project
-use_gcp_project() {
-    export CLOUDSDK_CORE_PROJECT="$1"
 }
 
 # Terraform workspace switching

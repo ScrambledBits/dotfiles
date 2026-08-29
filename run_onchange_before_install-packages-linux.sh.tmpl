@@ -14,23 +14,22 @@ else
     exit 1
 fi
 
-echo "Running brew bundle (Linux: cask and mas entries skipped)..."
+echo "Running brew bundle..."
 
 # Brewfile content is captured here so chezmoi detects changes and re-runs this script.
+# The shared Brewfile has no cask/mas lines (those live in the macOS-only Brewfile.MacOS),
+# so nothing needs filtering for Linux here.
 BREWFILE_CONTENT=$(cat <<'BREWFILE'
 {{ include "Brewfile" }}
 BREWFILE
 )
 
-# Update brew packages
+# Fetch latest formula metadata; brew bundle installs and upgrades by default.
 brew update --quiet
-brew upgrade --quiet
 
-# Filter out cask and mas lines — not supported on Homebrew for Linux.
-printf '%s\n' "$BREWFILE_CONTENT" \
-    | grep -v '^cask ' \
-    | grep -v '^mas '  \
-    | brew bundle --file=-
+# || true: brew bundle exits non-zero when any package fails; we treat
+#          individual failures as warnings so the overall script does not abort.
+printf '%s\n' "$BREWFILE_CONTENT" | brew bundle install --file=- || true
 
 echo "brew bundle complete."
 {{- end }}
