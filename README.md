@@ -19,10 +19,14 @@ Funciona en **macOS** (Apple Silicon e Intel) y **Linux** (Debian/Ubuntu, Fedora
 # 1. Instalar Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# 2. Instalar chezmoi (única dependencia inicial — no está en el Brewfile)
+# 2. Poner Homebrew en el PATH de esta sesión (el instalador no lo hace)
+eval "$(/opt/homebrew/bin/brew shellenv)"   # Apple Silicon
+# eval "$(/usr/local/bin/brew shellenv)"    # Intel
+
+# 3. Instalar chezmoi (única dependencia inicial — no está en el Brewfile)
 brew install chezmoi
 
-# 3. Inicializar y aplicar todo en un solo paso
+# 4. Inicializar y aplicar todo en un solo paso
 chezmoi init --apply git@github.com:ScrambledBits/dotfiles.git
 ```
 
@@ -46,16 +50,17 @@ Durante la inicialización se te pedirá:
 - Nombre completo
 - Correo electrónico
 - Usuario de GitHub
-- Zona horaria (ej. `America/Mexico_City`)
+- Llave SSH de firma de commits (opcional — deja en blanco para omitirla)
 
 Esto mantiene tu información personal fuera del repositorio.
 
 El proceso automáticamente:
 1. Instala Homebrew (Linuxbrew en Linux) si no está presente
 2. Ejecuta `brew bundle` con el `Brewfile` y (en macOS) también con `Brewfile.MacOS`
-3. Aplica todos los dotfiles en `~`
+3. Descarga Oh My Zsh (no requiere paso manual)
+4. Aplica todos los dotfiles en `~`
 
-> **App Store (macOS):** Si las apps de `mas` no se instalan, inicia sesión en la App Store y vuelve a ejecutar `chezmoi apply`.
+> **App Store (macOS):** las apps de `mas` se instalan después de que `brew bundle` instale `mas` mismo. Si no has iniciado sesión en la App Store, verás una advertencia; inicia sesión y ejecuta `chezmoi state delete-bucket --bucket=entryState && chezmoi apply`.
 
 ### Máquina existente (ya inicializada)
 
@@ -75,53 +80,36 @@ Los paquetes se gestionan con dos archivos Homebrew que los scripts de instalaci
 
 | Archivo | Plataforma | Contenido |
 |---------|-----------|-----------|
-| `Brewfile` | macOS + Linux | Herramientas CLI de DevOps, casks comunes, extensiones de VS Code, paquetes de uv |
-| `Brewfile.MacOS` | macOS únicamente | Taps y formulas macOS-específicos, apps gráficas (casks), Mac App Store, OrbStack, aws-vault, mdbook toolchain |
+| `Brewfile` | macOS + Linux | Herramientas CLI de DevOps, extensiones de VS Code, paquetes de uv |
+| `Brewfile.MacOS` | macOS únicamente | Taps y formulas macOS-específicos, apps gráficas (casks), Mac App Store, OrbStack, aws-vault |
 
-> **Linux:** El script de Linux usa solo el `Brewfile` compartido. Las líneas `cask` y `mas` se ignoran automáticamente en Linux.
+> **Linux:** El script de Linux usa solo el `Brewfile` compartido, que no contiene líneas `cask` ni `mas`.
 
 ---
 
 ## Qué Incluye
 
-- **Shell:** zsh con Oh My Zsh, prompt de Starship, mise, direnv, zsh-autosuggestions, fast-syntax-highlighting
-- **Cloud:** Herramientas para GCP, AWS, Azure con módulos conscientes del contexto en Starship
+- **Shell:** zsh con Oh My Zsh (instalado automáticamente vía chezmoi), prompt de Starship, mise, direnv, zsh-autosuggestions, fast-syntax-highlighting
+- **Cloud:** Herramientas para AWS con módulos conscientes del contexto en Starship
 - **Kubernetes:** k9s, kubectx, stern, prompt con contexto/namespace activo
 - **IaC:** Terraform (vía mise), Terragrunt, TFLint, Checkov, Trivy
 - **Desarrollo:** Neovim, delta (diffs de git), lazygit, fd, bat, eza, ripgrep, fzf, zoxide
-- **Docencia:** asciinema, vhs, mdbook (con plugins para PDF, EPUB, D2, alertas)
+- **Docencia:** asciinema, vhs, agg (grabación y conversión a GIF de sesiones de terminal)
 - **macOS exclusivo:** OrbStack (Docker Desktop), aws-vault (credenciales seguras), Proxyman (proxy HTTP), Raycast (lanzador)
 
 ---
 
 ## Arquitectura
 
-**Shell (`dot_zshrc.tmpl`):** Oh My Zsh con tema robbyrussell. Integra mise, direnv, zoxide (`z` reemplaza `cd`), y Starship. Sources `~/.zshrc.local` para sobreescrituras locales. También carga `zsh-autosuggestions` y `fast-syntax-highlighting` si están instalados vía Homebrew.
+**Shell (`dot_zshrc.tmpl`):** Oh My Zsh con el tema desactivado — Starship es el prompt. `dot_config/shell/paths.tmpl` calcula `BREW_PREFIX` según el sistema/arquitectura y arma el `PATH` antes de que se cargue el resto de la configuración. Integra mise (vía el plugin `mise` de Oh My Zsh), direnv, zoxide (`z` reemplaza `cd`), y Starship; las integraciones opcionales están protegidas con `command -v` para no romper el shell si falta alguna herramienta. Sources `~/.zshrc.local` para sobreescrituras locales. También carga `zsh-autosuggestions` y `fast-syntax-highlighting` si están instalados vía Homebrew.
 
-**Gestión de versiones (`dot_config/mise/config.toml`):** mise gestiona Python, uv, Node, Go, Rust, Terraform 1.15.7, Terragrunt, TFLint, fd, lazygit y delta. Establece `PIP_REQUIRE_VIRTUALENV=true` para prevenir instalaciones globales de pip.
+**Gestión de versiones (`dot_config/mise/config.toml`):** mise gestiona Python, uv, Node, Go, Rust, Terraform 1.15.9 (pinned — el resto usa `latest`), Terragrunt, TFLint, fd, lazygit y delta. Establece `PIP_REQUIRE_VIRTUALENV=true` para prevenir instalaciones globales de pip. Herramientas exclusivas de una máquina van en un `~/.config/mise/config.local.toml` sin versionar, que mise carga automáticamente junto al archivo gestionado.
 
-**Entornos por directorio (`dot_config/direnv/direnvrc`):** Define funciones helper para archivos `.envrc` — `use_aws_profile()`, `use_gcp_project()`, `use_tf_workspace()`. La activación de mise se maneja por activación de shell, no por `use_mise()` (deprecado).
+**Entornos por directorio (`dot_config/direnv/direnvrc`):** Define funciones helper para archivos `.envrc` — `use_aws_profile()`, `use_tf_workspace()`. La activación de mise se maneja por activación de shell, no por `use_mise()` (deprecado).
 
-**Prompt (`dot_config/starship.toml`):** Muestra estado de git, contexto/namespace de Kubernetes (solo en directorios k8s), proyecto de GCP, workspace de Terraform, y duración de comandos. Ruta estándar XDG: `~/.config/starship.toml` — funciona igual en macOS y Linux.
+**Prompt (`dot_config/starship.toml`):** Ícono de sistema operativo (módulo `[os]`), estado de git, contexto/namespace de Kubernetes (solo en directorios k8s), perfil de AWS, workspace de Terraform, y duración de comandos. Ruta estándar XDG: `~/.config/starship.toml` — funciona igual en macOS y Linux.
 
-**Git (`dot_gitconfig.tmpl`):** Usa delta para diffs (side-by-side), rebase al hacer pull, poda automática de refs remotas, estilo de conflicto `zdiff3`, `rerere` habilitado. La firma SSH de commits es opt-in vía la variable `gitSigningKey`.
-
----
-
-## Versiones de Herramientas (mise)
-
-| Herramienta | Versión |
-|-------------|---------|
-| Python | 3.13 |
-| Node.js | 24 (Active LTS) |
-| Go | 1.26 |
-| Terraform | 1.14.7 |
-| Terragrunt | 0.99 |
-| TFLint | 0.61 |
-| Poetry | 2.3 |
-| Ruff | 0.15 |
-
-> **Nota:** Terraform utiliza la licencia BSL de HashiCorp. [OpenTofu](https://opentofu.org/) (MPL 2.0) es una alternativa compatible — revisa `dot_config/mise/config.toml` para ver cómo alternar (comentado).
+**Git (`dot_gitconfig.tmpl`):** Usa delta para diffs (side-by-side), rebase al hacer pull, poda automática de refs remotas, estilo de conflicto `zdiff3`, `rerere` habilitado, credential helper `osxkeychain` (solo macOS). La firma SSH de commits es opt-in: se pregunta la llave al inicializar (`chezmoi init`) y puede cambiarse después con `chezmoi edit-config`.
 
 ---
 
@@ -137,6 +125,21 @@ Los paquetes se gestionan con dos archivos Homebrew que los scripts de instalaci
 | `projects` | cd ~/Projects |
 | `teaching` | cd ~/Projects/teaching |
 | `rec` | asciinema rec |
+
+Ver también las tareas de mise y los alias de git abajo.
+
+### Tareas de mise (`mise run <tarea>`)
+
+| Tarea | Qué hace |
+|-------|----------|
+| `tf-check` | `terraform fmt -check` + `tflint` + `terraform validate` |
+| `tf-docs` | Genera documentación del módulo Terraform con terraform-docs |
+| `k8s-check` | Valida manifiestos de Kubernetes con kubeconform |
+| `secrets-check` | Escanea el repositorio en busca de secretos con gitleaks |
+
+### Neovim y git
+
+Los atajos de Neovim (`<leader>ff/fg/fb/fh/e` para buscar archivos, grep, buffers, ayuda y el explorador de archivos) están en `dot_config/nvim/init.lua`; los alias de git (`st`, `co`, `lg`, `undo`, `amend`, `review`, `files`, entre otros) están en `dot_gitconfig.tmpl`.
 
 ---
 
@@ -154,16 +157,37 @@ alias my-alias="my-command"
 
 ### Datos de chezmoi locales
 
-Para sobrescribir variables de plantilla (correo de trabajo, llave SSH de firma), crea `~/.chezmoidata/local.toml` **antes** de ejecutar `chezmoi init`:
+Para cambiar variables de plantilla (correo de trabajo, llave SSH de firma) en una máquina ya inicializada, ejecuta:
 
-```toml
-# ~/.chezmoidata/local.toml
-[data]
-email = "trabajo@empresa.com"
-gitSigningKey = "key::ssh-ed25519 AAAA..."
+```bash
+chezmoi edit-config
 ```
 
-Este archivo tiene prioridad sobre la configuración global y nunca será rastreado por git.
+Esto abre la configuración de chezmoi para esta máquina (no versionada) en tu editor.
+
+### Herramientas de mise locales
+
+Para instalar una herramienta de mise solo en una máquina (sin agregarla al repositorio), créala en `~/.config/mise/config.local.toml` — mise lo carga automáticamente junto al `config.toml` gestionado.
+
+### API keys y secretos compartidos entre proyectos
+
+`~/.config/shell/api_keys.env` (machine-local, créalo manualmente) guarda API keys que usan varios proyectos. **No se carga globalmente** — cargarlo en cada shell pondría todas las keys en cada proceso, incluso en proyectos que no las necesitan. En su lugar, cada proyecto que las necesite las carga solo mientras estás en su directorio:
+
+```bash
+# En la raíz del proyecto, crea .envrc:
+echo 'dotenv_if_exists ~/.config/shell/api_keys.env' >> .envrc
+direnv allow .
+```
+
+direnv carga esas variables solo al entrar al directorio y las descarga al salir. El `.envrc` de un proyecto puede commitearse sin problema — solo contiene la ruta al archivo compartido, nunca los valores de las keys. Si un proyecto además necesita variables propias, agrégalas al mismo `.envrc`:
+
+```bash
+# .envrc
+dotenv_if_exists ~/.config/shell/api_keys.env
+export PROJECT_SPECIFIC_VAR="valor"
+```
+
+Si una key propia de un proyecto no debe compartirse ni commitearse, agrega `.envrc` (o el `.env` que referencie) al `.gitignore` de ese proyecto.
 
 ---
 
@@ -171,7 +195,7 @@ Este archivo tiene prioridad sobre la configuración global y nunca será rastre
 
 Para habilitar la firma de commits basada en SSH (sin necesidad de GPG):
 
-1. Configura `gitSigningKey` en `~/.chezmoidata/local.toml`
+1. Configura la llave de firma con `chezmoi edit-config` (o respóndela durante `chezmoi init`)
 2. Ejecuta `chezmoi apply` para regenerar `~/.gitconfig`
 3. Crea `~/.ssh/allowed_signers`:
    ```

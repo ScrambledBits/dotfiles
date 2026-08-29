@@ -8,7 +8,7 @@ command_timeout = 1000      # ms before a module is skipped
 
 # Custom prompt format with box-drawing characters
 format = """\
-[╭╴](238)$env_var\
+[╭╴](238)$os\
 $all[╰─](238)$character"""
 
 # =============================================================================
@@ -19,8 +19,9 @@ success_symbol = "[](238)"
 error_symbol   = "[](238)"
 vimcmd_symbol  = "[N](bold green)"  # Shown when in vim normal mode
 
-[env_var.STARSHIP_DISTRO]
-format = '[$env_value](bold white) '
+[os]
+disabled = false
+format   = '[$symbol](bold white) '
 
 [username]
 style_user  = "white bold"
@@ -85,10 +86,6 @@ detect_folders = ["manifests", "charts"]
 'gke_.*'         = 'GKE'
 'arn:aws:eks:.*' = 'EKS'
 'default'        = '⎈'
-
-[gcloud]
-format = 'on [☁️  $account(\($project\))]($style) '
-style  = "bold blue"
 
 [aws]
 format = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'

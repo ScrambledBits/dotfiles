@@ -1,8 +1,6 @@
-brew "asciinema"
 brew "aws-vault"
 brew "cairo"
 brew "cocoapods"
-brew "gemini-cli"
 brew "llmfit"
 brew "mas"
 brew "ollama", restart_service: :changed
@@ -10,7 +8,6 @@ brew "openai-whisper"
 brew "poppler"
 brew "rabbitmq"
 brew "tectonic"
-brew "vhs"
 brew "watson"
 
 cask "dbeaver-community"
@@ -23,7 +20,6 @@ cask "slack"
 cask "tabby"
 
 cask "caffeine"
-cask "font-monaspace"
 cask "ghostty"
 cask "vlc"
 

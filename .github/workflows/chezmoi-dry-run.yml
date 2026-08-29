@@ -1,0 +1,61 @@
+name: chezmoi dry-run
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  dry-run:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install chezmoi
+        run: |
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Write a CI chezmoi config
+        # `chezmoi init` can't be fed non-interactively here: this repo's
+        # .chezmoi.toml.tmpl uses promptStringOnce, and neither --promptString
+        # nor --promptDefaults populate that function (verified locally against
+        # chezmoi v2.72.0 — both still try to open a TTY). Writing the config
+        # chezmoi init would have generated sidesteps prompting entirely.
+        run: |
+          mkdir -p "$HOME/.config/chezmoi"
+          cat > "$HOME/.config/chezmoi/chezmoi.toml" <<'TOML'
+          [data]
+              name = "CI Runner"
+              email = "ci@example.com"
+              github = "ci"
+              gitSigningKey = ""
+          TOML
+
+      - name: Render and apply dotfiles (dry-run, no destination changes)
+        run: chezmoi --source "$GITHUB_WORKSPACE" --no-tty --no-pager apply --dry-run --verbose
+
+      - name: Render every run_/run_once_/run_onchange_ script for shellcheck
+        run: |
+          mkdir -p /tmp/rendered
+          for f in run_once_*.sh.tmpl run_onchange_*.sh.tmpl; do
+            [ -e "$f" ] || continue
+            chezmoi --source "$GITHUB_WORKSPACE" execute-template < "$f" > "/tmp/rendered/${f%.tmpl}" || true
+          done
+          cp run_once_after_setup-ssh-sockets.sh dot_config/git/hooks/executable_pre-commit /tmp/rendered/ 2>/dev/null || true
+
+      - name: Shellcheck rendered scripts
+        run: |
+          for f in /tmp/rendered/*; do
+            [ -s "$f" ] || continue
+            echo "--- $f ---"
+            shellcheck "$f"
+          done
+
+      - name: Starship config validates cleanly
+        run: |
+          curl -sS https://starship.rs/install.sh | sh -s -- --yes
+          STARSHIP_CONFIG="$GITHUB_WORKSPACE/dot_config/starship.toml" starship print-config >/dev/null
