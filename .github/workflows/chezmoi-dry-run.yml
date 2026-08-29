@@ -8,6 +8,7 @@ on:
 jobs:
   dry-run:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -50,7 +51,10 @@ jobs:
       - name: Shellcheck rendered scripts
         run: |
           for f in /tmp/rendered/*; do
-            [ -s "$f" ] || continue
+            # OS-guarded templates (e.g. darwin-only scripts on the linux
+            # runner) correctly render to just a trailing newline; skip those
+            # rather than let shellcheck flag them as missing a shebang.
+            grep -q '[^[:space:]]' "$f" || continue
             echo "--- $f ---"
             shellcheck "$f"
           done
