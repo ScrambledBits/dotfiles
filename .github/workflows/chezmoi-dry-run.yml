@@ -44,7 +44,7 @@ jobs:
           mkdir -p /tmp/rendered
           for f in run_once_*.sh.tmpl run_onchange_*.sh.tmpl; do
             [ -e "$f" ] || continue
-            chezmoi --source "$GITHUB_WORKSPACE" execute-template < "$f" > "/tmp/rendered/${f%.tmpl}" || true
+            chezmoi --source "$GITHUB_WORKSPACE" execute-template < "$f" > "/tmp/rendered/${f%.tmpl}"
           done
           cp run_once_after_setup-ssh-sockets.sh dot_config/git/hooks/executable_pre-commit /tmp/rendered/ 2>/dev/null || true
 
