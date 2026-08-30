@@ -1,0 +1,40 @@
+schema: spec-driven
+
+context: |
+  Personal dotfiles managed with chezmoi (source dir = this repo). Targets macOS (arm64/x86) and headless Linux.
+  Source naming: dot_ prefix, .tmpl = Go template, run_once_/run_onchange_ scripts. See CLAUDE.md for conventions.
+  README.md is Spanish and must stay Spanish; CHANGELOG.md gets an entry per landed change.
+  Shell scripts: set -o errexit -o nounset -o pipefail, printf not echo, long options, "${var}" quoting.
+  Never push; feature branches only; no AI attribution in commits.
+  Verification tools available: chezmoi (execute-template, apply --destination <scratch>), shellcheck, starship print-config, mise, brew bundle check.
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

@@ -41,9 +41,7 @@ read_only         = "  "
 format            = "at [$path]($style)[$read_only]($read_only_style) "
 
 [directory.substitutions]
-"~/Projects"          = " Projects"
-"~/Projects/teaching" = " Teaching"
-"~/Projects/dotfiles" = " Dotfiles"
+"~/Projects" = " Projects"
 
 [git_branch]
 symbol            = " "
@@ -64,7 +62,7 @@ behind     = "⇣${count}"
 stashed    = " "
 modified   = " "
 staged     = '[++\($count\)](green)'
-renamed    = "襁 "
+renamed    = "» "
 deleted    = " "
 
 # =============================================================================
@@ -112,7 +110,7 @@ detect_folders    = ["__pycache__", ".venv", "venv"]
 [rust]
 symbol            = " "
 format            = 'via [${symbol}${version}]($style) '
-style             = "bold orange"
+style             = "bold 208"
 detect_extensions = ["rs", "ron"]
 detect_files      = ["Cargo.toml", "Cargo.lock"]
 

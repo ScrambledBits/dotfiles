@@ -12,14 +12,14 @@ fi
 if command -v apt-get >/dev/null 2>&1; then
     echo "Installing build dependencies via apt..."
     sudo apt-get update -qq
-    sudo apt-get install -y build-essential procps curl file git
+    sudo apt-get install -y build-essential procps curl file git zsh
 elif command -v dnf >/dev/null 2>&1; then
     echo "Installing build dependencies via dnf..."
     sudo dnf groupinstall -y 'Development Tools'
-    sudo dnf install -y procps-ng curl file git
+    sudo dnf install -y procps-ng curl file git zsh
 elif command -v pacman >/dev/null 2>&1; then
     echo "Installing build dependencies via pacman..."
-    sudo pacman -Sy --noconfirm base-devel procps-ng curl file git
+    sudo pacman -Sy --noconfirm base-devel procps-ng curl file git zsh
 else
     echo "WARNING: Unknown package manager — ensure curl, git, and build tools are installed."
 fi

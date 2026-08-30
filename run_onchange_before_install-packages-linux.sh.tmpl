@@ -4,15 +4,7 @@
 # Managed by chezmoi - do not edit directly.
 set -euo pipefail
 
-# Add Homebrew to PATH (chezmoi does not source shell profiles).
-if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
-    eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
-else
-    echo "ERROR: Homebrew not found. Run chezmoi apply again after installing Homebrew." >&2
-    exit 1
-fi
+{{ template "brew-path.sh" . }}
 
 echo "Running brew bundle..."
 
