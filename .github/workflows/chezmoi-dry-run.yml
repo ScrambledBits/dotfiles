@@ -93,24 +93,32 @@ jobs:
         # genuine interactive session (this check's whole point) never sees.
         run: |
           python3 - "$RUNNER_TEMP/home" <<'PYEOF'
-          import os, pty, sys, time, select
+          import os, pty, sys, time, select, signal
 
           home = sys.argv[1]
           # "k" (kubectl) is deliberately excluded: the OMZ kubectl plugin
           # guards its whole plugin file behind `commands[kubectl]`, and this
           # scratch apply intentionally excludes scripts (--exclude scripts),
           # so no package manager ever installs kubectl here. "tf" has no
-          # such guard in the OMZ terraform plugin, so it stays.
-          cmd = "type gst kctx tf rec projects"
+          # such guard in the OMZ terraform plugin, so it stays. The trailing
+          # "; exit" is required: `zsh -ic` without it drops into an
+          # interactive prompt after the command runs instead of returning.
+          cmd = "type gst kctx tf rec projects; exit"
           pid, fd = pty.fork()
           if pid == 0:
               os.environ["HOME"] = home
               os.environ["TERM"] = "xterm-256color"
+              # Skips OMZ's compaudit insecure-directory check (oh-my-zsh.sh),
+              # which otherwise prompts interactively and hangs forever on a
+              # pty with nothing to feed it keystrokes — the real machine at
+              # ~/.oh-my-zsh has normal permissions and never hits this; only
+              # a scratch $RUNNER_TEMP tree is at risk of tripping it.
+              os.environ["ZSH_DISABLE_COMPFIX"] = "true"
               os.chdir(home)
               os.execvp("zsh", ["zsh", "-ic", cmd])
 
           out = b""
-          reaped = None
+          timed_out = True
           deadline = time.time() + 30
           while time.time() < deadline:
               r, _, _ = select.select([fd], [], [], 1)
@@ -118,28 +126,24 @@ jobs:
                   try:
                       chunk = os.read(fd, 4096)
                   except OSError:
+                      timed_out = False
                       break
                   if not chunk:
+                      timed_out = False
                       break
                   out += chunk
-              try:
-                  wpid, status = os.waitpid(pid, os.WNOHANG)
-                  if wpid == pid:
-                      reaped = status
-                      break
-              except ChildProcessError:
-                  break
 
-          if reaped is None:
-              try:
-                  _, reaped = os.waitpid(pid, 0)
-              except ChildProcessError:
-                  reaped = 0
+          if timed_out:
+              os.kill(pid, signal.SIGKILL)
 
+          _, status = os.waitpid(pid, 0)
           text = out.decode(errors="replace").replace("\r", "")
           print(text)
 
-          exit_code = os.waitstatus_to_exitcode(reaped) if reaped else 0
+          if timed_out:
+              sys.exit("timed out waiting for the interactive shell")
+
+          exit_code = os.waitstatus_to_exitcode(status)
           if exit_code != 0:
               sys.exit(f"interactive shell exited {exit_code}")
           for name in ("gst", "kctx", "tf", "rec", "projects"):
