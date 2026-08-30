@@ -12,10 +12,10 @@ CI SHALL apply the source state into a scratch home directory (scripts excluded,
 - **THEN** `HOME="$TMP" zsh -ic 'true'` exits 0 with empty stderr on each
 
 ### Requirement: Managed aliases resolve
-CI SHALL assert that the aliases the README documents resolve in the scratch shell.
+CI SHALL assert that the custom aliases the README documents resolve in the scratch shell. Aliases defined by an Oh My Zsh plugin that guards itself behind a binary's presence (e.g. the `kubectl` plugin's `k`, which no-ops without `commands[kubectl]`) are exempt, since this scratch apply deliberately excludes package-install scripts (`--exclude scripts`) and never installs that binary.
 
 #### Scenario: Alias check
-- **WHEN** `HOME="$TMP" zsh -ic 'type gst kctx tf k rec projects'` runs
+- **WHEN** `HOME="$TMP" zsh -ic 'type gst kctx tf rec projects'` runs
 - **THEN** every name reports an alias and the command exits 0
 
 ### Requirement: Rendered zsh files are syntactically valid
