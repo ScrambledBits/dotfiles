@@ -108,17 +108,19 @@ jobs:
           if pid == 0:
               os.environ["HOME"] = home
               os.environ["TERM"] = "xterm-256color"
-              # Skips OMZ's compaudit insecure-directory check (oh-my-zsh.sh),
-              # which otherwise prompts interactively and hangs forever on a
-              # pty with nothing to feed it keystrokes — the real machine at
-              # ~/.oh-my-zsh has normal permissions and never hits this; only
-              # a scratch $RUNNER_TEMP tree is at risk of tripping it.
+              # Best-effort: skips OMZ's compaudit insecure-directory check
+              # (oh-my-zsh.sh), which can prompt interactively otherwise. The
+              # real machine at ~/.oh-my-zsh has normal permissions and never
+              # hits this; only a scratch $RUNNER_TEMP tree is at risk. Belt
+              # and suspenders below actually answers the prompt if it shows
+              # up anyway (seen live on ubuntu-latest even with this set).
               os.environ["ZSH_DISABLE_COMPFIX"] = "true"
               os.chdir(home)
               os.execvp("zsh", ["zsh", "-ic", cmd])
 
           out = b""
           timed_out = True
+          answered_prompt = False
           deadline = time.time() + 30
           while time.time() < deadline:
               r, _, _ = select.select([fd], [], [], 1)
@@ -132,6 +134,12 @@ jobs:
                       timed_out = False
                       break
                   out += chunk
+                  low = out.lower()
+                  if not answered_prompt and b"[y]" in low and (
+                      b"continue" in low or b"compaudit" in low or b"compinit" in low
+                  ):
+                      os.write(fd, b"y\n")
+                      answered_prompt = True
 
           if timed_out:
               os.kill(pid, signal.SIGKILL)
