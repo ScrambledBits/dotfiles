@@ -15,7 +15,7 @@ Personal dotfiles repository managed with [chezmoi](https://chezmoi.io), for a C
 - `symlink_` prefix → target is a symlink; file content is the link destination
 - `run_once_*` scripts run once per machine; `run_onchange_*` scripts re-run whenever their rendered content changes
 - `.chezmoiexternal.toml` declares externally-fetched content not stored in this repo (Oh My Zsh)
-- `.chezmoiignore` excludes: `~/.zshrc.local`, Oh My Zsh runtime/customization dirs (`.oh-my-zsh/cache`, `.oh-my-zsh/custom/**` — must stay untouched by the exact external above), Claude runtime files (everything under `~/.claude` — nothing under `~/.claude` is chezmoi-managed today), the Brewfiles (source-side inputs for scripts, not deployed files), and repo metadata/docs (`CHANGELOG.md`, `TODO.md`, `README.md`, `CLAUDE.md`, the audit outputs)
+- `.chezmoiignore` excludes: `~/.zshrc.local`, Oh My Zsh runtime/customization dirs (`.oh-my-zsh/cache`, `.oh-my-zsh/custom/**` — must stay untouched by the exact external above), Claude runtime files (everything under `~/.claude` — nothing under `~/.claude` is chezmoi-managed today), the Brewfiles (source-side inputs for scripts, not deployed files), and repo metadata/docs (`CHANGELOG.md`, `TODO.md`, `README.md`, `CLAUDE.md`, `openspec/**`)
 
 ## Key Commands
 
@@ -51,6 +51,8 @@ mise run secrets-check       # gitleaks repo scan
 | `run_onchange_before_install-packages-{darwin,linux}.sh.tmpl` | Install packages (Brewfile on macOS); darwin bundles `mas` entries separately after `mas` itself is installed |
 | `run_onchange_after_install-mise-tools.sh.tmpl` | Runs `mise install` when mise config changes |
 | `run_once_after_setup-ssh-sockets.sh` | Creates `~/.ssh/sockets` for SSH multiplexing |
+| `.github/workflows/chezmoi-dry-run.yml` | CI: dry-run apply on ubuntu + macos, shellcheck on rendered scripts, Starship config check |
+| `openspec/` | [OpenSpec](https://openspec.dev) planning: `changes/<name>/{proposal,design,tasks}.md` + spec deltas; `specs/` fills in as changes are archived. Run `npx @fission-ai/openspec list` / `/opsx:apply <name>` / `/opsx:archive <name>` |
 
 ## Architecture
 
