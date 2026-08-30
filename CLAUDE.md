@@ -9,7 +9,7 @@ Personal dotfiles repository managed with [chezmoi](https://chezmoi.io), for a C
 ## Chezmoi Conventions (source name → target)
 
 - `dot_` prefix → leading dot: `dot_zshrc.tmpl` → `~/.zshrc`; `dot_config/` → `~/.config/`
-- `.tmpl` suffix → Go template rendered with `[data]` variables from `.chezmoi.toml.tmpl`: `name`, `email`, `github`, `gitSigningKey`
+- `.tmpl` suffix → Go template rendered with `[data]` variables from `.chezmoi.toml.tmpl`: `name`, `email`, `gitSigningKey`
 - `private_` prefix → restrictive permissions on the target (not currently used by any file in this repo — reach for it again if a future file needs to live under `~/.claude` or `~/Library` without loosening their permissions)
 - `executable_` prefix → target is executable (`dot_config/git/hooks/executable_pre-commit`)
 - `symlink_` prefix → target is a symlink; file content is the link destination
@@ -76,7 +76,7 @@ Custom aliases are minimal; `g*`, `tf*`, and `k*` families come from the enabled
 - `vim` → nvim
 - `cat` → bat, `grep` → `batgrep --terminal-width=200 --no-snip`, `find` → fd
 - `ls`/`ll`/`la` → eza variants, `l` → `la`
-- `kctx` → kubectx, `projects` → `cd ~/Projects`, `teaching` → `cd ~/Projects/teaching`, `rec` → `asciinema rec`
+- `kctx` → kubectx, `projects` → `cd ~/Projects`, `rec` → `asciinema rec`
 
 ## Chezmoi Auto-commit
 

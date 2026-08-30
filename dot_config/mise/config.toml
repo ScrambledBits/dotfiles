@@ -1,11 +1,18 @@
 # mise configuration - version manager for multiple tools
 # https://mise.jdx.dev/
 # Usage: mise install (installs all tools listed here)
+#
+# Ownership rule: mise owns registry/dev tools (versioned or run as CLIs);
+# brew owns system packages, casks, and fonts. Don't install the same tool
+# from both — see openspec/changes/consolidate-package-ownership.
 
 [tools]
 # Python for teaching and automation
 python = "latest"
-uv = "latest"   # Replaces poetry + ruff + pip (fast, unified Python toolchain)
+uv = "latest"   # Replaces poetry + pip (fast, unified Python toolchain)
+ruff = "latest"
+"pipx:mdformat" = "latest"
+"pipx:nano-pdf" = "latest"
 
 # Node.js for slidev and modern tools
 node = "latest"

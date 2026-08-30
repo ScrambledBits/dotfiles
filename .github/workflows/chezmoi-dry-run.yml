@@ -32,7 +32,6 @@ jobs:
           [data]
               name = "CI Runner"
               email = "ci@example.com"
-              github = "ci"
               gitSigningKey = ""
           TOML
 
@@ -67,3 +66,80 @@ jobs:
         run: |
           curl -sS https://starship.rs/install.sh | sh -s -- --yes
           STARSHIP_CONFIG="$GITHUB_WORKSPACE/dot_config/starship.toml" starship print-config >/dev/null
+
+      - name: Ensure zsh is available (ubuntu-latest usually ships it already)
+        if: runner.os == 'Linux'
+        run: command -v zsh || sudo apt-get update -qq && sudo apt-get install -y zsh
+
+      - name: Apply into a scratch HOME
+        run: |
+          mkdir -p "$RUNNER_TEMP/home" "$RUNNER_TEMP/cache"
+          chezmoi --config "$HOME/.config/chezmoi/chezmoi.toml" \
+            --source "$GITHUB_WORKSPACE" \
+            --destination "$RUNNER_TEMP/home" \
+            --cache "$RUNNER_TEMP/cache" \
+            --persistent-state "$RUNNER_TEMP/state.boltdb" \
+            --no-tty apply --exclude scripts
+          ls "$RUNNER_TEMP/home/.zshrc" "$RUNNER_TEMP/home/.oh-my-zsh" "$RUNNER_TEMP/home/.config" >/dev/null
+
+      - name: Syntax-check the rendered shell files
+        run: |
+          zsh -n "$RUNNER_TEMP/home/.zshrc"
+          zsh -n "$RUNNER_TEMP/home/.config/shell/paths"
+
+      - name: Interactive shell smoke test
+        # A real pty is required: zsh started via -c with no controlling
+        # terminal prints spurious "can't change option: zle" noise that a
+        # genuine interactive session (this check's whole point) never sees.
+        run: |
+          python3 - "$RUNNER_TEMP/home" <<'PYEOF'
+          import os, pty, sys, time, select
+
+          home = sys.argv[1]
+          cmd = "type gst kctx tf k rec projects"
+          pid, fd = pty.fork()
+          if pid == 0:
+              os.environ["HOME"] = home
+              os.environ["TERM"] = "xterm-256color"
+              os.chdir(home)
+              os.execvp("zsh", ["zsh", "-ic", cmd])
+
+          out = b""
+          reaped = None
+          deadline = time.time() + 30
+          while time.time() < deadline:
+              r, _, _ = select.select([fd], [], [], 1)
+              if fd in r:
+                  try:
+                      chunk = os.read(fd, 4096)
+                  except OSError:
+                      break
+                  if not chunk:
+                      break
+                  out += chunk
+              try:
+                  wpid, status = os.waitpid(pid, os.WNOHANG)
+                  if wpid == pid:
+                      reaped = status
+                      break
+              except ChildProcessError:
+                  break
+
+          if reaped is None:
+              try:
+                  _, reaped = os.waitpid(pid, 0)
+              except ChildProcessError:
+                  reaped = 0
+
+          text = out.decode(errors="replace").replace("\r", "")
+          print(text)
+
+          exit_code = os.waitstatus_to_exitcode(reaped) if reaped else 0
+          if exit_code != 0:
+              sys.exit(f"interactive shell exited {exit_code}")
+          for name in ("gst", "kctx", "tf", "k", "rec", "projects"):
+              if f"{name} not found" in text or f"{name}: command not found" in text:
+                  sys.exit(f"alias '{name}' did not resolve")
+          if "command not found" in text:
+              sys.exit("unexpected 'command not found' in shell startup")
+          PYEOF
