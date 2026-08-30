@@ -30,12 +30,9 @@
 Brewfile
 Brewfile.MacOS
 
-# Repo metadata and audit outputs, not dotfiles
+# Repo metadata and OpenSpec planning artifacts, not dotfiles
 CHANGELOG.md
 TODO.md
 README.md
 CLAUDE.md
-AUDIT_REPORT.md
-ROADMAP.md
-audit_findings.json
-claim-review/**
+openspec/**
