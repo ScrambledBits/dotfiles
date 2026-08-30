@@ -32,7 +32,6 @@ jobs:
           [data]
               name = "CI Runner"
               email = "ci@example.com"
-              github = "ci"
               gitSigningKey = ""
           TOML
 
@@ -67,3 +66,97 @@ jobs:
         run: |
           curl -sS https://starship.rs/install.sh | sh -s -- --yes
           STARSHIP_CONFIG="$GITHUB_WORKSPACE/dot_config/starship.toml" starship print-config >/dev/null
+
+      - name: Ensure zsh is available (ubuntu-latest usually ships it already)
+        if: runner.os == 'Linux'
+        run: command -v zsh || sudo apt-get update -qq && sudo apt-get install -y zsh
+
+      - name: Apply into a scratch HOME
+        run: |
+          mkdir -p "$RUNNER_TEMP/home" "$RUNNER_TEMP/cache"
+          chezmoi --config "$HOME/.config/chezmoi/chezmoi.toml" \
+            --source "$GITHUB_WORKSPACE" \
+            --destination "$RUNNER_TEMP/home" \
+            --cache "$RUNNER_TEMP/cache" \
+            --persistent-state "$RUNNER_TEMP/state.boltdb" \
+            --no-tty apply --exclude scripts
+          ls "$RUNNER_TEMP/home/.zshrc" "$RUNNER_TEMP/home/.oh-my-zsh" "$RUNNER_TEMP/home/.config" >/dev/null
+
+      - name: Syntax-check the rendered shell files
+        run: |
+          zsh -n "$RUNNER_TEMP/home/.zshrc"
+          zsh -n "$RUNNER_TEMP/home/.config/shell/paths"
+
+      - name: Interactive shell smoke test
+        # A real pty is required: zsh started via -c with no controlling
+        # terminal prints spurious "can't change option: zle" noise that a
+        # genuine interactive session (this check's whole point) never sees.
+        run: |
+          python3 - "$RUNNER_TEMP/home" <<'PYEOF'
+          import os, pty, sys, time, select, signal
+
+          home = sys.argv[1]
+          # "k" (kubectl) is deliberately excluded: the OMZ kubectl plugin
+          # guards its whole plugin file behind `commands[kubectl]`, and this
+          # scratch apply intentionally excludes scripts (--exclude scripts),
+          # so no package manager ever installs kubectl here. "tf" has no
+          # such guard in the OMZ terraform plugin, so it stays. The trailing
+          # "; exit" is required: `zsh -ic` without it drops into an
+          # interactive prompt after the command runs instead of returning.
+          cmd = "type gst kctx tf rec projects; exit"
+          pid, fd = pty.fork()
+          if pid == 0:
+              os.environ["HOME"] = home
+              os.environ["TERM"] = "xterm-256color"
+              # Best-effort: skips OMZ's compaudit insecure-directory check
+              # (oh-my-zsh.sh), which can prompt interactively otherwise. The
+              # real machine at ~/.oh-my-zsh has normal permissions and never
+              # hits this; only a scratch $RUNNER_TEMP tree is at risk. Belt
+              # and suspenders below actually answers the prompt if it shows
+              # up anyway (seen live on ubuntu-latest even with this set).
+              os.environ["ZSH_DISABLE_COMPFIX"] = "true"
+              os.chdir(home)
+              os.execvp("zsh", ["zsh", "-ic", cmd])
+
+          out = b""
+          timed_out = True
+          answered_prompt = False
+          deadline = time.time() + 30
+          while time.time() < deadline:
+              r, _, _ = select.select([fd], [], [], 1)
+              if fd in r:
+                  try:
+                      chunk = os.read(fd, 4096)
+                  except OSError:
+                      timed_out = False
+                      break
+                  if not chunk:
+                      timed_out = False
+                      break
+                  out += chunk
+                  low = out.lower()
+                  if not answered_prompt and b"[y]" in low and (
+                      b"continue" in low or b"compaudit" in low or b"compinit" in low
+                  ):
+                      os.write(fd, b"y\n")
+                      answered_prompt = True
+
+          if timed_out:
+              os.kill(pid, signal.SIGKILL)
+
+          _, status = os.waitpid(pid, 0)
+          text = out.decode(errors="replace").replace("\r", "")
+          print(text)
+
+          if timed_out:
+              sys.exit("timed out waiting for the interactive shell")
+
+          exit_code = os.waitstatus_to_exitcode(status)
+          if exit_code != 0:
+              sys.exit(f"interactive shell exited {exit_code}")
+          for name in ("gst", "kctx", "tf", "rec", "projects"):
+              if f"{name} not found" in text or f"{name}: command not found" in text:
+                  sys.exit(f"alias '{name}' did not resolve")
+          if "command not found" in text:
+              sys.exit("unexpected 'command not found' in shell startup")
+          PYEOF

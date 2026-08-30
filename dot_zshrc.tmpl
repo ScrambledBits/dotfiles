@@ -33,7 +33,6 @@ ZSH_THEME=""  # Disabled — using Starship instead
 
 setopt hist_ignore_all_dups inc_append_history
 ENABLE_CORRECTION="true"
-DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="dd/mm/yyyy"
 
 zstyle ':completion:::::' completer _complete _approximate
@@ -42,19 +41,14 @@ zstyle ':completion:*:approximate:*' max-errors 2
 # Plugins (tailored to your actual workflow)
 plugins=(
     alias-finder
-    aliases
-    ansible
-    brew
     colored-man-pages
     docker
-    docker-compose
     git
     git-extras
-    gitignore
-    history
     kubectl
-{{ if eq .chezmoi.os "darwin" }}    macos
-{{ end -}}
+{{- if eq .chezmoi.os "darwin" }}
+    macos
+{{- end }}
     man
     mise
     terraform
@@ -116,10 +110,9 @@ alias ll='eza -l --icons'
 alias la='eza -la --icons'
 alias l='la'
 
-# Navigation & teaching workflow
+# Navigation & recording
 alias kctx='kubectx'
 alias projects='cd ~/Projects'
-alias teaching='cd ~/Projects/teaching'
 alias rec='asciinema rec'
 
 # =============================================================================
