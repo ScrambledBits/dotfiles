@@ -7,4 +7,4 @@
 
 ## 2. Verification
 
-- [ ] 2.1 `gh run list --limit 2` shows both matrix jobs green; total job time under 2 minutes.
+- [x] 2.1 `gh run list --limit 2` shows both matrix jobs green; total job time under 2 minutes.

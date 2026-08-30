@@ -14,4 +14,4 @@
 
 ## 4. Verification
 
-- [ ] 4.1 CI green; `HOME=<scratch> zsh -ic 'type gst k tf kctx'` resolves after a scratch apply.
+- [x] 4.1 CI green; `HOME=<scratch> zsh -ic 'type gst k tf kctx'` resolves after a scratch apply.

@@ -16,4 +16,4 @@
 
 ## 4. Verification
 
-- [ ] 4.1 CI green; CHANGELOG entry lists the removed lines and the ownership rule.
+- [x] 4.1 CI green; CHANGELOG entry lists the removed lines and the ownership rule.

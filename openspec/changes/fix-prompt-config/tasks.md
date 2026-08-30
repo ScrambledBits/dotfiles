@@ -12,4 +12,4 @@
 
 ## 3. Verification
 
-- [ ] 3.1 CI green (Starship validation step) and `chezmoi diff` shows only the intended lines.
+- [x] 3.1 CI green (Starship validation step) and `chezmoi diff` shows only the intended lines.
