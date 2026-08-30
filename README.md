@@ -33,17 +33,20 @@ chezmoi init --apply git@github.com:ScrambledBits/dotfiles.git
 ### Máquina nueva — Linux (Debian/Ubuntu, Fedora, Arch)
 
 ```bash
-# 1. Instalar dependencias del sistema
-sudo apt-get install -y build-essential curl git          # Debian/Ubuntu
-sudo dnf groupinstall -y 'Development Tools' && \
-  sudo dnf install -y curl git                            # Fedora
-sudo pacman -Sy --noconfirm base-devel curl git           # Arch
+# 1. Instalar dependencias mínimas (el script de bootstrap instala el resto)
+sudo apt-get install -y curl git zsh                       # Debian/Ubuntu
+sudo dnf install -y curl git zsh                           # Fedora
+sudo pacman -Sy --noconfirm curl git zsh                   # Arch
 
-# 2. Instalar chezmoi
-sh -c "$(curl -fsLS get.chezmoi.io)"
+# 2. Instalar chezmoi en ~/.local/bin y ponerlo en el PATH de esta sesión
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
 
 # 3. Inicializar y aplicar todo en un solo paso
 chezmoi init --apply git@github.com:ScrambledBits/dotfiles.git
+
+# 4. Cambiar el shell de inicio de sesión a zsh (paso manual, pide tu contraseña)
+chsh -s "$(command -v zsh)"
 ```
 
 Durante la inicialización se te pedirá:
@@ -74,14 +77,20 @@ mise install
 
 ---
 
+## Verificación (CI)
+
+Cada push y pull request corre [`.github/workflows/chezmoi-dry-run.yml`](.github/workflows/chezmoi-dry-run.yml) en `ubuntu-latest` y `macos-latest`: aplica los dotfiles en modo `--dry-run`, además de renderizar y aplicar de verdad todos los templates en un `$HOME` de prueba para arrancar una shell zsh interactiva real (sin `Homebrew` ni los `run_*` scripts) y confirmar que los alias documentados resuelven. También corre `shellcheck` sobre cada script renderizado y valida `dot_config/starship.toml` con `starship print-config`.
+
+---
+
 ## Estructura de Paquetes
 
 Los paquetes se gestionan con dos archivos Homebrew que los scripts de instalación embeben automáticamente:
 
 | Archivo | Plataforma | Contenido |
 |---------|-----------|-----------|
-| `Brewfile` | macOS + Linux | Herramientas CLI de DevOps, extensiones de VS Code, paquetes de uv |
-| `Brewfile.MacOS` | macOS únicamente | Taps y formulas macOS-específicos, apps gráficas (casks), Mac App Store, OrbStack, aws-vault |
+| `Brewfile` | macOS + Linux | Herramientas CLI de DevOps |
+| `Brewfile.MacOS` | macOS únicamente | Formulas macOS-específicas, apps gráficas (casks, incl. VS Code + extensiones, OrbStack), Mac App Store, fuentes |
 
 > **Linux:** El script de Linux usa solo el `Brewfile` compartido, que no contiene líneas `cask` ni `mas`.
 
@@ -123,7 +132,6 @@ Los paquetes se gestionan con dos archivos Homebrew que los scripts de instalaci
 | `cat` | bat |
 | `find` | fd |
 | `projects` | cd ~/Projects |
-| `teaching` | cd ~/Projects/teaching |
 | `rec` | asciinema rec |
 
 Ver también las tareas de mise y los alias de git abajo.
@@ -139,7 +147,7 @@ Ver también las tareas de mise y los alias de git abajo.
 
 ### Neovim y git
 
-Los atajos de Neovim (`<leader>ff/fg/fb/fh/e` para buscar archivos, grep, buffers, ayuda y el explorador de archivos) están en `dot_config/nvim/init.lua`; los alias de git (`st`, `co`, `lg`, `undo`, `amend`, `review`, `files`, entre otros) están en `dot_gitconfig.tmpl`.
+Los atajos de Neovim (`<leader>ff/fg/fb/fh/e` para buscar archivos, grep, buffers, ayuda y el explorador de archivos) están en `dot_config/nvim/init.lua`. Los alias de git propios (`undo`, `amend`) están en `dot_gitconfig.tmpl`; el resto (`gst`, `gco`, `glog`, entre otros) viene del plugin `git` de Oh My Zsh.
 
 ---
 
@@ -168,6 +176,17 @@ Esto abre la configuración de chezmoi para esta máquina (no versionada) en tu 
 ### Herramientas de mise locales
 
 Para instalar una herramienta de mise solo en una máquina (sin agregarla al repositorio), créala en `~/.config/mise/config.local.toml` — mise lo carga automáticamente junto al `config.toml` gestionado.
+
+### Credenciales de GitHub en Linux
+
+En macOS, `credential.helper = osxkeychain` guarda las credenciales de git en el Keychain. En Linux, el `.gitconfig` gestionado usa `cache --timeout=3600` (sin dependencias extra), pero para GitHub específicamente es mejor usar `gh`, que ya viene en el `Brewfile` compartido:
+
+```bash
+gh auth login
+gh auth setup-git
+```
+
+Esto configura un credential helper propio de `gh` para `github.com`, que coexiste con el `cache` por defecto.
 
 ### API keys y secretos compartidos entre proyectos
 
@@ -201,21 +220,6 @@ Para habilitar la firma de commits basada en SSH (sin necesidad de GPG):
    ```
    tu@correo.com ssh-ed25519 AAAA...
    ```
-
----
-
-## Flujo de Trabajo de Docencia
-
-```bash
-# Navegar a los materiales de clase
-teaching
-
-# Grabar sesión de terminal para los alumnos
-rec workshop-demo.cast
-
-# Convertir a GIF para la documentación
-agg workshop-demo.cast workshop-demo.gif
-```
 
 ---
 

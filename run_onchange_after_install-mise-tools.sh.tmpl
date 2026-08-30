@@ -4,6 +4,8 @@
 # mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
 set -o errexit -o nounset -o pipefail
 
+{{ template "brew-path.sh" . }}
+
 if command -v mise >/dev/null 2>&1; then
     echo "Installing mise tools..."
     mise install
