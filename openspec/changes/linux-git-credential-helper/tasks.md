@@ -8,4 +8,4 @@
 
 ## 3. Verification
 
-- [ ] 3.1 On a Linux box after apply: `git config --get credential.helper` → `cache --timeout=3600`; an HTTPS `git fetch` prompts once, then not again within the hour.
+- [x] 3.1 On a Linux box after apply: `git config --get credential.helper` → `cache --timeout=3600`; an HTTPS `git fetch` prompts once, then not again within the hour.

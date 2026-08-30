@@ -15,5 +15,5 @@
 
 ## 4. Verification
 
-- [ ] 4.1 CI (`.github/workflows/chezmoi-dry-run.yml`) green on ubuntu-latest and macos-latest after the change (`gh run list --limit 1`).
-- [ ] 4.2 Fresh `ubuntu:24.04` container walkthrough of README §Linux ends with `zsh` installed and `mise ls` listing every tool from `config.toml`; record the result in the CHANGELOG entry.
+- [x] 4.1 CI (`.github/workflows/chezmoi-dry-run.yml`) green on ubuntu-latest and macos-latest after the change (`gh run list --limit 1`).
+- [x] 4.2 Fresh `ubuntu:24.04` container walkthrough of README §Linux ends with `zsh` installed and `mise ls` listing every tool from `config.toml`; record the result in the CHANGELOG entry.
