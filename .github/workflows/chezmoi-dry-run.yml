@@ -96,7 +96,12 @@ jobs:
           import os, pty, sys, time, select
 
           home = sys.argv[1]
-          cmd = "type gst kctx tf k rec projects"
+          # "k" (kubectl) is deliberately excluded: the OMZ kubectl plugin
+          # guards its whole plugin file behind `commands[kubectl]`, and this
+          # scratch apply intentionally excludes scripts (--exclude scripts),
+          # so no package manager ever installs kubectl here. "tf" has no
+          # such guard in the OMZ terraform plugin, so it stays.
+          cmd = "type gst kctx tf rec projects"
           pid, fd = pty.fork()
           if pid == 0:
               os.environ["HOME"] = home
@@ -137,7 +142,7 @@ jobs:
           exit_code = os.waitstatus_to_exitcode(reaped) if reaped else 0
           if exit_code != 0:
               sys.exit(f"interactive shell exited {exit_code}")
-          for name in ("gst", "kctx", "tf", "k", "rec", "projects"):
+          for name in ("gst", "kctx", "tf", "rec", "projects"):
               if f"{name} not found" in text or f"{name}: command not found" in text:
                   sys.exit(f"alias '{name}' did not resolve")
           if "command not found" in text:
