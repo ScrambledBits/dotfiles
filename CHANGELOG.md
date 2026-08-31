@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-08-30 (2)
+
+- `Brewfile.MacOS`: dropped `dbeaver-community`, `raycast`, `slack`, `tabby` (owner decision, post-apply) — uninstalled from the machine, no longer reinstalled by `chezmoi apply`.
+
 ## 2026-08-30
 
 OpenSpec-driven remediation (`openspec/changes/`, all archived after implementation):

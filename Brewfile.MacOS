@@ -9,13 +9,9 @@ brew "openai-whisper"
 brew "poppler"
 brew "watson"
 
-cask "dbeaver-community"
 cask "obsidian"
 cask "orbstack"
 cask "proxyman"
-cask "raycast"
-cask "slack"
-cask "tabby"
 
 cask "caffeine"
 cask "ghostty"
