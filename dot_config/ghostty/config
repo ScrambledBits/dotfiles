@@ -16,3 +16,7 @@ quit-after-last-window-closed = "true"
 # Maintenance
 auto-update = "check"
 auto-update-channel = "stable"
+
+# Shell integration
+# Installs Ghostty's terminfo on remote hosts so TERM=xterm-ghostty works over SSH.
+shell-integration-features = ssh-terminfo

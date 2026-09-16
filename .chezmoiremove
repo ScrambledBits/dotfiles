@@ -1,0 +1,7 @@
+# Targets chezmoi deletes on every apply.
+# https://www.chezmoi.io/reference/special-files/chezmoiremove/
+
+# Pre-a35ef2c Ghostty config. Ghostty loads BOTH `config` and `config.ghostty`
+# from each config dir, `config.ghostty` LAST — so this leftover silently
+# overrode the managed `config`. Verified against Ghostty 1.3.1.
+.config/ghostty/config.ghostty
