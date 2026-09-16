@@ -85,10 +85,16 @@ detect_folders = ["manifests", "charts"]
 'arn:aws:eks:.*' = 'EKS'
 'default'        = '⎈'
 
+{{if eq .chezmoi.hostname "Moria"}}
+[gcloud]
+format = 'on [☁️  $account\(($project\))]($style) '
+style  = "bold blue"
+{{else}}
 [aws]
 format = 'on [$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
 style  = 'bold 214'
 symbol = ' '
+{{end}}
 
 [docker_context]
 format         = "via [ $context](bold blue) "

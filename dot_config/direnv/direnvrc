@@ -4,6 +4,14 @@
 # NOTE: use_mise() has been removed — mise tool loading is handled automatically
 # by the OMZ mise plugin. No .envrc action needed for this.
 
+{{if eq .chezmoi.hostname "Moria"}}
+# GCP project switching
+# Usage in .envrc: use_gcp_project my-gcp-project
+use_gcp_project() {
+    export CLOUDSDK_CORE_PROJECT="$1"
+}
+{{end}}
+
 # AWS profile switching
 # Usage in .envrc: use_aws_profile my-profile
 use_aws_profile() {
