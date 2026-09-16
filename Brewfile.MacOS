@@ -17,7 +17,7 @@ cask "caffeine"
 cask "ghostty"
 cask "vlc"
 
-cask "font-hurmit-nerd-font"
+cask "font-hack-nerd-font"
 
 mas "Compressor", id: 6746516157
 mas "iHosts", id: 1102004240
