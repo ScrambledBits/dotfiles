@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-15
+
+- Ghostty config was silently inert: Ghostty loads both `config` and `config.ghostty` from each config directory, `config.ghostty` **last**. The pre-`a35ef2c` leftover at `~/.config/ghostty/config.ghostty` therefore overrode the managed `config` on Rivendell (Hurmit/18/Afterglow instead of Hack/20/Nocturnal Winter). Added `.chezmoiremove` so the leftover is deleted on every machine, and ported `shell-integration-features = ssh-terminfo` — the one setting that existed only in the leftover — into the managed config.
+- `Brewfile.MacOS`: `font-hurmit-nerd-font` → `font-hack-nerd-font`. The managed Ghostty config asks for Hack Nerd Font Mono; Hurmit was only kept because the *old* config referenced it. Hack was present on Rivendell as a hand-installed font, so no fresh machine had ever actually rendered this config correctly.
+- `CLAUDE.md`: resolved the `zdiff3` merge-conflict markers committed in `a35ef2c`, and corrected the Ghostty section — it claimed only one filename is read.
+- `.chezmoiignore`: dropped the dead `Library/**` guard; the Ghostty Application Support symlink it protected was removed in `a35ef2c` and no `Library/` path exists in the source.
+
 ## 2026-08-30 (2)
 
 - `Brewfile.MacOS`: dropped `dbeaver-community`, `raycast`, `slack`, `tabby` (owner decision, post-apply) — uninstalled from the machine, no longer reinstalled by `chezmoi apply`.
