@@ -12,6 +12,11 @@
 - `mise`: Terraform moves from `1.15.8` to `latest`; dropped `cloudflared` (no Brewfile owns it either now, so fresh machines won't get it); added a `tf` → `terraform` shell alias.
 - `dot_zshrc.tmpl`: removed the Moria-only Google Cloud SDK block.
 
+## 2026-10-15
+
+- `paths`: put keg-only `ffmpeg-full` ahead of Homebrew's slim `ffmpeg` (which lacks libass, zscale and libplacebo) when it is installed. On macOS, also export `DYLD_FALLBACK_LIBRARY_PATH="$BREW_PREFIX/lib:/usr/local/lib:/usr/lib"`, because libplacebo dlopens `libvulkan` by bare name and dyld doesn't search the Homebrew lib dir. Since SIP strips `DYLD_*` from `/usr/bin/env` and `/bin/bash` children, scripts that need libplacebo still have to export it themselves.
+- `Brewfile.MacOS`: added `ffmpeg-full`, `media-info`, `molten-vk` and `vulkan-loader`.
+
 ## 2026-09-15
 
 - Ghostty config was silently inert: Ghostty loads both `config` and `config.ghostty` from each config directory, `config.ghostty` **last**. The pre-`a35ef2c` leftover at `~/.config/ghostty/config.ghostty` therefore overrode the managed `config` on Rivendell (Hurmit/18/Afterglow instead of Hack/20/Nocturnal Winter). Added `.chezmoiremove` so the leftover is deleted on every machine, and ported `shell-integration-features = ssh-terminfo` — the one setting that existed only in the leftover — into the managed config.
