@@ -20,9 +20,7 @@ cask "vlc"
 cask "font-hack-nerd-font"
 
 mas "Compressor", id: 6746516157
-mas "iHosts", id: 1102004240
 mas "Pixelmator Pro", id: 6746662575
-mas "Trello", id: 1278508951
 mas "Xcode", id: 497799835
 
 cask "visual-studio-code"
