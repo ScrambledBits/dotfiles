@@ -2,6 +2,7 @@
 
 ## 2026-10-18
 
+- `dot_gitconfig.tmpl`: `gh` is now the credential helper for `github.com`/`gist.github.com` when installed. `gh auth setup-git` wrote these lines into the managed `~/.gitconfig`, so every `chezmoi apply` deleted them and HTTPS pushes failed; the README no longer recommends it.
 - `Brewfile.MacOS`: dropped the `iHosts` and `Trello` App Store entries. `brew bundle` never uninstalls, so they stay on machines that already have them.
 - `mise`: Terraform moves from `1.15.8` to `latest`; dropped `cloudflared` (no Brewfile owns it either now, so fresh machines won't get it); added a `tf` → `terraform` shell alias.
 - `dot_zshrc.tmpl`: removed the retired-host-only Google Cloud SDK block.
