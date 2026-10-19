@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-18
+
+- `dot_gitconfig.tmpl`: `gh` is now the credential helper for `github.com`/`gist.github.com` when installed. `gh auth setup-git` wrote these lines into the managed `~/.gitconfig`, so every `chezmoi apply` deleted them and HTTPS pushes failed; the README no longer recommends it.
+- `Brewfile.MacOS`: dropped the `iHosts` and `Trello` App Store entries. `brew bundle` never uninstalls, so they stay on machines that already have them.
+- `mise`: Terraform moves from `1.15.8` to `latest`; dropped `cloudflared` (no Brewfile owns it either now, so fresh machines won't get it); added a `tf` → `terraform` shell alias.
+- `dot_zshrc.tmpl`: removed the retired-host-only Google Cloud SDK block.
+
 ## 2026-09-15
 
 - Ghostty config was silently inert: Ghostty loads both `config` and `config.ghostty` from each config directory, `config.ghostty` **last**. The pre-`a35ef2c` leftover at `~/.config/ghostty/config.ghostty` therefore overrode the managed `config` on primary-mac (Hurmit/18/Afterglow instead of Hack/20/Nocturnal Winter). Added `.chezmoiremove` so the leftover is deleted on every machine, and ported `shell-integration-features = ssh-terminfo` — the one setting that existed only in the leftover — into the managed config.
