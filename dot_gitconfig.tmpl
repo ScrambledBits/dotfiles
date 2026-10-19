@@ -70,6 +70,17 @@
 [credential]
     helper = cache --timeout=3600
 {{ end }}
+{{- with lookPath "gh" }}
+
+# Empty helper first resets the inherited one so only gh answers for GitHub.
+[credential "https://github.com"]
+    helper =
+    helper = !{{ . }} auth git-credential
+
+[credential "https://gist.github.com"]
+    helper =
+    helper = !{{ . }} auth git-credential
+{{- end }}
 
 [filter "lfs"]
     clean = git-lfs clean -- %f
