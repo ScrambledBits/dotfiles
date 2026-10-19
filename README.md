@@ -190,16 +190,15 @@ Los valores de plantilla (nombre, correo, llave de firma) se piden una sola vez 
 
 Para instalar una herramienta de mise solo en una máquina (sin agregarla al repositorio), créala en `~/.config/mise/config.local.toml` — mise lo carga automáticamente junto al `config.toml` gestionado.
 
-### Credenciales de GitHub en Linux
+### Credenciales de GitHub
 
-En macOS, `credential.helper = osxkeychain` guarda las credenciales de git en el Keychain. En Linux, el `.gitconfig` gestionado usa `cache --timeout=3600` (sin dependencias extra), pero para GitHub específicamente es mejor usar `gh`, que ya viene en el `Brewfile` compartido:
+En macOS, `credential.helper = osxkeychain` guarda las credenciales de git en el Keychain; en Linux se usa `cache --timeout=3600`. Para `github.com` y `gist.github.com`, el `.gitconfig` gestionado usa `gh` como credential helper siempre que `gh` (incluido en el `Brewfile` compartido) esté instalado al ejecutar `chezmoi apply`. Solo hace falta iniciar sesión una vez:
 
 ```bash
 gh auth login
-gh auth setup-git
 ```
 
-Esto configura un credential helper propio de `gh` para `github.com`, que coexiste con el `cache` por defecto.
+No ejecutes `gh auth setup-git`: escribiría directamente en `~/.gitconfig` y el siguiente `chezmoi apply` lo sobrescribiría. Si instalas `gh` después del primer `apply`, vuelve a ejecutar `chezmoi apply`.
 
 ### API keys y secretos compartidos entre proyectos
 
