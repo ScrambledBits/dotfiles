@@ -3,10 +3,8 @@
 [user]
     name = {{ .name }}
     email = {{ .email }}
-{{ if eq .chezmoi.hostname "Moria" }}
 {{ if .gitSigningKey }}
     signingkey = {{ .gitSigningKey }}
-{{ end }}
 {{ end }}
 
 [core]
@@ -41,14 +39,12 @@
 
 [rerere]
     enabled = true              # remember and replay recorded conflict resolutions
-{{ if eq .chezmoi.hostname "Moria" }}
 {{ if .gitSigningKey }}
 [commit]
     gpgsign = true
 
 [tag]
     gpgsign = true
-{{ end }}
 {{ end }}
 [delta]
     navigate = true
