@@ -37,7 +37,6 @@ fd = "latest"
 lazygit = "latest"
 delta = "latest"   # Better git diffs (pager)
 packer = "latest"        # HashiCorp Packer (image builder)
-poetry = "latest"        # Python dependency manager
 powershell-core = "latest" # PowerShell
 tmux = "latest"          # Terminal multiplexer
 

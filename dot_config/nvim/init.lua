@@ -23,7 +23,6 @@ vim.opt.smartcase    = true
 vim.opt.scrolloff    = 4
 vim.opt.virtualedit  = "all"
 vim.opt.gdefault     = true
-vim.opt.list         = false
 vim.opt.listchars    = { tab = "▸ ", trail = "·", extends = "#", nbsp = "·" }
 vim.opt.fileformats  = { "unix", "dos", "mac" }
 vim.opt.clipboard    = "unnamedplus"
