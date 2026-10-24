@@ -6,13 +6,9 @@
 # =============================================================================
 # paths is chezmoi-managed (sets PATH and BREW_PREFIX); .env is machine-local,
 # create manually: ~/.config/shell/.env
-if [[ -f "$HOME/.config/shell/.env" ]]; then
-    source "$HOME/.config/shell/.env"
-fi
+[[ -f "$HOME/.config/shell/.env" ]] && source "$HOME/.config/shell/.env"
 
-if [[ -f "$HOME/.config/shell/paths" ]]; then
-    source "$HOME/.config/shell/paths"
-fi
+[[ -f "$HOME/.config/shell/paths" ]] && source "$HOME/.config/shell/paths"
 
 # API keys (~/.config/shell/api_keys.env, machine-local) are deliberately NOT
 # sourced here — that put every key into every shell process. Opt a project
@@ -55,9 +51,7 @@ plugins=(
 )
 
 # Load OMZ
-if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
-    source "$ZSH/oh-my-zsh.sh"
-fi
+[[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
 [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
     source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
@@ -79,9 +73,7 @@ command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 
 # Rust/Cargo environment (installed via mise)
-if [[ -f "$HOME/.cargo/env" ]]; then
-    source "$HOME/.cargo/env"
-fi
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 # =============================================================================
 # 6. Shell Enhancements
@@ -119,9 +111,8 @@ alias rec='asciinema rec'
 # =============================================================================
 # 8. Git Extras Completion
 # =============================================================================
-if [[ -f "$BREW_PREFIX/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]]; then
+[[ -f "$BREW_PREFIX/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]] && \
     source "$BREW_PREFIX/opt/git-extras/share/git-extras/git-extras-completion.zsh"
-fi
 
 # =============================================================================
 # 9. Local Overrides (Not in Git)

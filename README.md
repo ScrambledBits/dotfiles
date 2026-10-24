@@ -114,7 +114,7 @@ Los paquetes se gestionan con dos archivos Homebrew que los scripts de instalaci
 
 **Gestión de versiones (`dot_config/mise/config.toml`):** mise gestiona Python, uv, Node, Go, Rust, Terraform 1.15.9 (pinned — el resto usa `latest`), Terragrunt, TFLint, fd, lazygit y delta. Establece `PIP_REQUIRE_VIRTUALENV=true` para prevenir instalaciones globales de pip. Herramientas exclusivas de una máquina van en un `~/.config/mise/config.local.toml` sin versionar, que mise carga automáticamente junto al archivo gestionado.
 
-**Entornos por directorio (`dot_config/direnv/direnvrc`):** Define funciones helper para archivos `.envrc` — `use_aws_profile()`, `use_tf_workspace()`. La activación de mise se maneja por activación de shell, no por `use_mise()` (deprecado).
+**Entornos por directorio (direnv):** Sin librería de helpers — define las variables directamente en `.envrc` (por ejemplo `export AWS_PROFILE=mi-perfil`). La activación de mise se maneja por activación de shell.
 
 **Prompt (`dot_config/starship.toml`):** Ícono de sistema operativo (módulo `[os]`), estado de git, contexto/namespace de Kubernetes (solo en directorios k8s), perfil de AWS, workspace de Terraform, y duración de comandos. Ruta estándar XDG: `~/.config/starship.toml` — funciona igual en macOS y Linux.
 

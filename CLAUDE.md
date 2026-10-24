@@ -10,7 +10,7 @@ Personal dotfiles repository managed with [chezmoi](https://chezmoi.io), for a C
 
 - `dot_` prefix → leading dot: `dot_zshrc.tmpl` → `~/.zshrc`; `dot_config/` → `~/.config/`
 - `.tmpl` suffix → Go template rendered with `[data]` variables from `.chezmoi.toml.tmpl`: `name`, `email`, `gitSigningKey`
-- `private_` prefix → restrictive permissions on the target (not currently used by any file in this repo — reach for it again if a future file needs to live under `~/.claude` or `~/Library` without loosening their permissions)
+- `private_` prefix → restrictive permissions on the target (`dot_ssh/private_sockets/` → `~/.ssh/sockets` at 0700)
 - `executable_` prefix → target is executable (`dot_config/git/hooks/executable_pre-commit`)
 - `symlink_` prefix → target is a symlink; file content is the link destination
 - `run_once_*` scripts run once per machine; `run_onchange_*` scripts re-run whenever their rendered content changes
@@ -40,7 +40,6 @@ mise run secrets-check       # gitleaks repo scan
 | `dot_ssh/config.tmpl` | SSH config (see Architecture) |
 | `dot_config/mise/config.toml` | Tool versions, env vars, tasks |
 | `dot_config/starship.toml` | Prompt |
-| `dot_config/direnv/direnvrc` | direnv helper functions |
 | `dot_config/nvim/init.lua` | Neovim config, bootstraps lazy.nvim |
 | `dot_config/ghostty/config.ghostty` | Terminal config, single source read via the XDG path on both OSes |
 | `dot_config/shell/paths.tmpl` | Templates `BREW_PREFIX` per OS/arch and sets `PATH` — deliberate central place, do not inline into `.zshrc` |
@@ -50,7 +49,7 @@ mise run secrets-check       # gitleaks repo scan
 | `run_once_before_install-homebrew-{darwin,linux}.sh.tmpl` | Bootstrap Homebrew/Linuxbrew |
 | `run_onchange_before_install-packages-{darwin,linux}.sh.tmpl` | Install packages (Brewfile on macOS); darwin bundles `mas` entries separately after `mas` itself is installed |
 | `run_onchange_after_install-mise-tools.sh.tmpl` | Runs `mise install` when mise config changes |
-| `run_once_after_setup-ssh-sockets.sh` | Creates `~/.ssh/sockets` for SSH multiplexing |
+| `dot_ssh/private_sockets/.keep` | Makes chezmoi create `~/.ssh/sockets` (0700) for SSH multiplexing |
 | `.github/workflows/chezmoi-dry-run.yml` | CI: dry-run apply on ubuntu + macos, shellcheck on rendered scripts, Starship config check |
 | `openspec/` | [OpenSpec](https://openspec.dev) planning: `changes/<name>/{proposal,design,tasks}.md` + spec deltas; `specs/` fills in as changes are archived. Run `npx @fission-ai/openspec list` / `/opsx:apply <name>` / `/opsx:archive <name>` |
 
@@ -60,11 +59,11 @@ mise run secrets-check       # gitleaks repo scan
 
 **Version management (`dot_config/mise/config.toml`)**: mise manages Python, uv, Node, Go, Rust, Terraform (latest), Terragrunt, TFLint, fd, lazygit, and delta. Sets `PIP_REQUIRE_VIRTUALENV=true`. Defines the `tg` → `terragrunt` alias under `[shell_alias]` (a valid mise key — do not flag it) and the `tf-check`/`tf-docs`/`k8s-check`/`secrets-check` tasks. OpenTofu is a commented-out alternative to Terraform. Machine-local tools (e.g. one machine's `flutter`) belong in an untracked `~/.config/mise/config.local.toml`, which mise loads automatically alongside `config.toml` — never add a machine-only tool to the tracked file.
 
-**Per-directory environments (`dot_config/direnv/direnvrc`)**: Helper functions for `.envrc` files — `use_aws_profile()`, `use_tf_workspace()`. `use_mise()` was removed as deprecated; mise loading happens via shell activation.
+**Per-directory environments (direnv)**: No helper library — set variables directly in `.envrc` (e.g. `export AWS_PROFILE=my-profile`). `.chezmoiremove` deletes the old `~/.config/direnv/direnvrc`. mise loading happens via shell activation.
 
 **Prompt (`dot_config/starship.toml`)**: OS icon (`[os]` module), git status, Kubernetes context/namespace (only in k8s project directories), AWS profile, Terraform workspace, command duration. `command_timeout = 1000` prevents slow prompts. Verify module keys against the Starship schema before editing — invalid keys have been introduced here before.
 
-**Ghostty (`dot_config/ghostty/config`)**: Single config at the XDG path `~/.config/ghostty/config`. Ghostty reads **both** `config` and `config.ghostty` from each config directory and loads `config.ghostty` **last**, so a stray `~/.config/ghostty/config.ghostty` silently overrides the managed file — verified empirically against Ghostty 1.3.1, which is exactly how the pre-`a35ef2c` leftover shadowed this config on primary-mac until 2026-09-15. `.chezmoiremove` now deletes that leftover on every machine. On macOS the `~/Library/Application Support/com.mitchellh.ghostty/` files load after the XDG ones; nothing is tracked there, so the XDG file is the only source of truth.
+**Ghostty (`dot_config/ghostty/config`)**: Single config at the XDG path `~/.config/ghostty/config`. Ghostty reads **both** `config` and `config.ghostty` from each config directory and loads `config.ghostty` **last**, so a stray `~/.config/ghostty/config.ghostty` silently overrides the managed file — verified empirically against Ghostty 1.3.1, which is exactly how the pre-`a35ef2c` leftover shadowed this config on the primary Mac until 2026-09-15. `.chezmoiremove` now deletes that leftover on every machine. On macOS the `~/Library/Application Support/com.mitchellh.ghostty/` files load after the XDG ones; nothing is tracked there, so the XDG file is the only source of truth.
 
 **Git (`dot_gitconfig.tmpl`)**: delta for diffs (side-by-side), rebase on pull, auto-prunes remote refs, `zdiff3` conflict style, `rerere` enabled, branches sorted by recency, LFS filters, `osxkeychain` credential helper (darwin only); `gh auth git-credential` for github.com/gist.github.com, rendered only when `lookPath "gh"` finds gh at apply time (absolute path, so GUI git clients without Homebrew on `PATH` still work). `core.hooksPath = ~/.config/git/hooks` wires in the global gitleaks pre-commit hook, which then chains to a repo-local `.git/hooks/pre-commit` (via `git rev-parse --git-dir`, resolving the *actual* `.git` directory — **never** `git rev-parse --git-path hooks`, which returns this global hooksPath itself and would make the hook call itself). `pre-commit install` still refuses to run per-repo while `core.hooksPath` is set globally (this is pre-commit's own installer check, independent of what the hook does); use `pre-commit install -f` to force-install into `.git/hooks/pre-commit`, which the global hook then picks up. SSH commit/tag signing is opt-in: the whole `[gpg]`/`[commit]` block only renders when `gitSigningKey` is set (prompted at `chezmoi init`, changeable later via `chezmoi edit-config`).
 

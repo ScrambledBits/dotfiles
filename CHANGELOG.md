@@ -2,19 +2,23 @@
 
 ## 2026-10-24
 
-- Dropped `cloudflared` entirely. `dot_ssh/config.tmpl` no longer shows a `cloudflared access ssh` example in its `config.local` comment, and the `package-ownership` spec's "No dead taps" scenario no longer depends on it. Uninstalled from primary-mac (brew and mise), along with the one `config.local` host that tunnelled through it, its known_hosts keys and the `~/.cloudflared` tokens.
+- Dropped `cloudflared` entirely. `dot_ssh/config.tmpl` no longer shows a `cloudflared access ssh` example in its `config.local` comment, and the `package-ownership` spec's "No dead taps" scenario no longer depends on it. Uninstalled from the primary Mac (brew and mise), along with the one `config.local` host that tunnelled through it, its known_hosts keys and the `~/.cloudflared` tokens.
+- Dropped every reference to a decommissioned host. Git signing now renders whenever `gitSigningKey` is set, as CLAUDE.md already documented; Starship always shows the `[aws]` module (the host's `[gcloud]` variant is gone).
+- `dot_config/direnv/direnvrc` deleted, and added to `.chezmoiremove`. Its three `use_*` helpers only wrapped `export`, nothing called them, and the file had no `.tmpl` suffix, so the deployed copy ran literal `{{if ...}}` lines.
+- `~/.ssh/sockets` is now a chezmoi-managed `private_` directory (`dot_ssh/private_sockets/.keep`) instead of a `run_once` script.
+- Removed `poetry` from mise (uv replaces it), `tmux` from the Brewfile (mise owns it), `vim.opt.list = false` (Neovim's default), and the commented `openspec init` scaffolding from `openspec/config.yaml`. `.zshrc` uses the `[[ -f X ]] && source X` form throughout.
 
 ## 2026-10-23
 
 - `Brewfile.MacOS`: added the `facebook/fb`, `pystardust/ani-cli` and `steipete/tap` taps with `trusted: true`, plus the one package used from each (`idb-companion`, `ani-cli`, `remindctl`). These were hand-installed, so a fresh machine wouldn't get them. Without `trusted: true`, Homebrew 7 refuses to load third-party taps.
-- Removed the untracked `charmbracelet/tap`, `cloudflare/cloudflare`, `xdevplatform/tap` and `yakitrak/yakitrak` taps on primary-mac. Nothing installed came from them, and `vhs`/`curl` come from `homebrew/core`.
+- Removed the untracked `charmbracelet/tap`, `cloudflare/cloudflare`, `xdevplatform/tap` and `yakitrak/yakitrak` taps on the primary Mac. Nothing installed came from them, and `vhs`/`curl` come from `homebrew/core`.
 
 ## 2026-10-18
 
 - `dot_gitconfig.tmpl`: `gh` is now the credential helper for `github.com`/`gist.github.com` when installed. `gh auth setup-git` wrote these lines into the managed `~/.gitconfig`, so every `chezmoi apply` deleted them and HTTPS pushes failed; the README no longer recommends it.
 - `Brewfile.MacOS`: dropped the `iHosts` and `Trello` App Store entries. `brew bundle` never uninstalls, so they stay on machines that already have them.
 - `mise`: Terraform moves from `1.15.8` to `latest`; dropped `cloudflared` (no Brewfile owns it either now, so fresh machines won't get it); added a `tf` → `terraform` shell alias.
-- `dot_zshrc.tmpl`: removed the retired-host-only Google Cloud SDK block.
+- `dot_zshrc.tmpl`: removed the host-specific Google Cloud SDK block.
 
 ## 2026-10-15
 
@@ -23,8 +27,8 @@
 
 ## 2026-09-15
 
-- Ghostty config was silently inert: Ghostty loads both `config` and `config.ghostty` from each config directory, `config.ghostty` **last**. The pre-`a35ef2c` leftover at `~/.config/ghostty/config.ghostty` therefore overrode the managed `config` on primary-mac (Hurmit/18/Afterglow instead of Hack/20/Nocturnal Winter). Added `.chezmoiremove` so the leftover is deleted on every machine, and ported `shell-integration-features = ssh-terminfo` — the one setting that existed only in the leftover — into the managed config.
-- `Brewfile.MacOS`: `font-hurmit-nerd-font` → `font-hack-nerd-font`. The managed Ghostty config asks for Hack Nerd Font Mono; Hurmit was only kept because the *old* config referenced it. Hack was present on primary-mac as a hand-installed font, so no fresh machine had ever actually rendered this config correctly.
+- Ghostty config was silently inert: Ghostty loads both `config` and `config.ghostty` from each config directory, `config.ghostty` **last**. The pre-`a35ef2c` leftover at `~/.config/ghostty/config.ghostty` therefore overrode the managed `config` on the primary Mac (Hurmit/18/Afterglow instead of Hack/20/Nocturnal Winter). Added `.chezmoiremove` so the leftover is deleted on every machine, and ported `shell-integration-features = ssh-terminfo` — the one setting that existed only in the leftover — into the managed config.
+- `Brewfile.MacOS`: `font-hurmit-nerd-font` → `font-hack-nerd-font`. The managed Ghostty config asks for Hack Nerd Font Mono; Hurmit was only kept because the *old* config referenced it. Hack was present on the primary Mac as a hand-installed font, so no fresh machine had ever actually rendered this config correctly.
 - `CLAUDE.md`: resolved the `zdiff3` merge-conflict markers committed in `a35ef2c`, and corrected the Ghostty section — it claimed only one filename is read.
 - `.chezmoiignore`: dropped the dead `Library/**` guard; the Ghostty Application Support symlink it protected was removed in `a35ef2c` and no `Library/` path exists in the source.
 
@@ -45,7 +49,7 @@ OpenSpec-driven remediation (`openspec/changes/`, all archived after implementat
 - Removed the unused `github` chezmoi-init prompt and its `[github]` gitconfig consumer; collapsed 15 `.chezmoiignore` lines for `.claude/*` into one `.claude` line.
 - Linux gets a `credential.helper = cache --timeout=3600` (was darwin-only); README documents `gh auth setup-git` for GitHub specifically.
 - CI now applies the rendered dotfiles into a scratch `$HOME` on both runners and runs a real interactive `zsh` smoke test (aliases resolve, no syntax errors), not just a template dry-run.
-- `Brewfile.MacOS` owner review: cut `rabbitmq`, `cocoapods`, `tectonic` (zero use, no connection to the stated workflow), `mysqlworkbench` and `pgadmin4` (redundant with `dbeaver-community`), and 13 of 14 Nerd Font casks (only `font-hurmit-nerd-font` is referenced by Ghostty). Kept `aws-vault` (pairs with the `use_aws_profile` direnv helper), `llmfit`, `openai-whisper`, `poppler`, `watson`, `ollama`.
+- `Brewfile.MacOS` owner review: cut `rabbitmq`, `cocoapods`, `tectonic` (zero use, no connection to the stated workflow), `mysqlworkbench` and `pgadmin4` (redundant with `dbeaver-community`), and 13 of 14 Nerd Font casks (only `font-hurmit-nerd-font` is referenced by Ghostty). Kept `aws-vault` (pairs with per-project `AWS_PROFILE` in direnv), `llmfit`, `openai-whisper`, `poppler`, `watson`, `ollama`.
 
 ## 2026-08-29
 
