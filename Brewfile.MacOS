@@ -1,6 +1,14 @@
 # Ownership rule: mise owns registry/dev tools; brew owns system packages,
 # casks, and fonts. See openspec/changes/consolidate-package-ownership.
 
+tap "facebook/fb", trusted: true
+tap "pystardust/ani-cli", "https://github.com/pystardust/ani-cli.git", trusted: true
+tap "steipete/tap", trusted: true
+
+brew "facebook/fb/idb-companion"
+brew "pystardust/ani-cli/ani-cli"
+brew "steipete/tap/remindctl"
+
 brew "aws-vault"
 brew "llmfit"
 brew "mas"
