@@ -21,9 +21,9 @@ For any tool, the tracked files (`Brewfile`, `Brewfile.MacOS`, `dot_config/mise/
 ### Requirement: No dead taps
 Every `tap` entry in a Brewfile SHALL be the source of at least one `brew` entry in the same set of Brewfiles.
 
-#### Scenario: cloudflared without the vendor tap
+#### Scenario: No vendor tap for a core formula
 - **WHEN** `brew bundle` runs with the shared `Brewfile`
-- **THEN** `cloudflared` installs from `homebrew/core` and no `cloudflare/cloudflare` tap is added
+- **THEN** no `cloudflare/cloudflare` tap is added
 
 ### Requirement: No redundant explicit dependencies
 A Brewfile SHALL NOT list a formula that is already a mandatory dependency of another listed formula, unless a comment states why it is pinned explicitly.
