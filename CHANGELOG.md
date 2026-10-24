@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-23
+
+- `Brewfile.MacOS`: added the `facebook/fb`, `pystardust/ani-cli` and `steipete/tap` taps with `trusted: true`, plus the one package used from each (`idb-companion`, `ani-cli`, `remindctl`). These were hand-installed, so a fresh machine wouldn't get them. Without `trusted: true`, Homebrew 7 refuses to load third-party taps.
+- Removed the untracked `charmbracelet/tap`, `cloudflare/cloudflare`, `xdevplatform/tap` and `yakitrak/yakitrak` taps on primary-mac. Nothing installed came from them, and `vhs`/`curl` come from `homebrew/core`.
+
 ## 2026-10-18
 
 - `dot_gitconfig.tmpl`: `gh` is now the credential helper for `github.com`/`gist.github.com` when installed. `gh auth setup-git` wrote these lines into the managed `~/.gitconfig`, so every `chezmoi apply` deleted them and HTTPS pushes failed; the README no longer recommends it.
