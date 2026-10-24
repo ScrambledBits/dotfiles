@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-24
+
+- Dropped `cloudflared` entirely. `dot_ssh/config.tmpl` no longer shows a `cloudflared access ssh` example in its `config.local` comment, and the `package-ownership` spec's "No dead taps" scenario no longer depends on it. Uninstalled from Rivendell (brew and mise), along with the one `config.local` host that tunnelled through it, its known_hosts keys and the `~/.cloudflared` tokens.
+
 ## 2026-10-23
 
 - `Brewfile.MacOS`: added the `facebook/fb`, `pystardust/ani-cli` and `steipete/tap` taps with `trusted: true`, plus the one package used from each (`idb-companion`, `ani-cli`, `remindctl`). These were hand-installed, so a fresh machine wouldn't get them. Without `trusted: true`, Homebrew 7 refuses to load third-party taps.
